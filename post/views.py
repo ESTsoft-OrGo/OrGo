@@ -29,3 +29,14 @@ class CommentEdit(APIView):
         }
         return Response(datas,status=status.HTTP_200_OK)
 
+
+class CommentDelete(APIView):
+    def post(self, request):
+        comment = Comment.objects.get(id=request.data)
+        comment.is_active = False
+        comment.save()
+        
+        datas = {
+            "message": "삭제되었습니다.",
+        }
+        return Response(datas,status=status.HTTP_200_OK)
