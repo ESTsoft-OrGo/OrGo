@@ -16,3 +16,16 @@ class CommentWrite(APIView):
             "message": "댓글 생성 완료",
         }
         return Response(datas,status=status.HTTP_201_CREATED)
+
+
+class CommentEdit(APIView):
+    def post(self, request):
+        comment = Comment.objects.get(id=request.data['comment_id'])
+        comment.content = request.data['comment']
+        comment.save()
+        
+        datas = {
+            "message": "수정되었습니다.",
+        }
+        return Response(datas,status=status.HTTP_200_OK)
+
