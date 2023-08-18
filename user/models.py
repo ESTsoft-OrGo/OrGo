@@ -4,8 +4,9 @@ from django.utils import timezone
 
 
 class UserManager(BaseUserManager):
-    
-    def _create_user(self, email, password, is_staff, is_superuser, **extra_fields):
+
+    # create_user
+    def create_user(self, email, password, is_staff, is_superuser, **extra_fields):
         if not email:
             raise ValueError('이미 있는 Email 입니다.')
         now = timezone.now()
@@ -22,12 +23,15 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
-    # create_user
-    def create_user(self, email, password, **extra_fields):
-        return self._create_user(email, password, False, False, **extra_fields)
+    
     # create_superuser
     def create_superuser(self, email, password, **extra_fields):
-        return self._create_user(email, password, True, True, **extra_fields)
+        user = self.create_user(email, password=password)
+        user.is_superuser = True
+        user.is_staff = True
+
+        user.save(using=self._db)
+        return user
 
 
 class User(AbstractUser):
