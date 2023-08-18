@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CommentWrite, CommentDelete, CommentEdit #, Like, Unlike, List, Write ,Edit, Delete, View, Search, 
+from .views import CommentWrite, CommentDelete, CommentEdit, ReCommentWrite #, Like, Unlike, List, Write ,Edit, Delete, View, Search, 
 
 app_name = 'post'
 
@@ -16,6 +16,8 @@ urlpatterns = [
     path("comment/write/", CommentWrite.as_view(), name="cm-write"),
     path("comment/delete/", CommentDelete.as_view(), name="cm-delete"),
     path("comment/edit/", CommentEdit.as_view(), name="cm-edit"),
+    # 대댓글
+    path("re-comment/write/", ReCommentWrite.as_view(), name="r-cm-write"),
     # # 좋아요
     # path("like/", Like.as_view(), name="like"),
     # path("unlike/", Unlike.as_view(), name="unlike"),
