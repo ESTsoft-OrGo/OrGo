@@ -8,7 +8,6 @@ from user.models import User, Follower
 
 # Create your views here.
 class Follow(APIView):
-    
     def post(self, request):
         me = User.objects.get(email='test1@gmail.com')
         
@@ -32,3 +31,24 @@ class Follow(APIView):
                 "message":"unfollow"
             }
             return Response(datas, status=status.HTTP_200_OK)
+
+
+class FollowList(APIView):
+    def get(self, request):
+        me = User.objects.get(email='test1@gmail.com')
+        
+        # 내가 팔로우한 사람들
+        follow = Follower.objects.filter(follower_id=me)
+        print(follow)
+        for i in follow:
+            print(i.target_id)
+        
+        # 나를 팔로우 한 사람들
+        # target = Follower.objects.filter(target_id가=me)
+        # print(target)
+        datas = {
+            "message":"followlist"
+            }
+            
+        return Response(datas, status=status.HTTP_200_OK)
+        
