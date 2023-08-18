@@ -16,7 +16,7 @@ class CommentWrite(APIView):
         user = User.objects.get(email='test1@gmail.com')
         post = Post.objects.get(id=request.data['post_id'])
         
-        comment = Comment.objects.create(writer=user,content=request.data['content'],post=post)
+        comment = Comment.objects.create(writer=user,content=request.data['content'],post=post,parent_comment=None)
         
         datas = {
             "message": "댓글 생성 완료",
@@ -38,7 +38,7 @@ class CommentEdit(APIView):
 
 class CommentDelete(APIView):
     def post(self, request):
-        comment = Comment.objects.get(id=request.data)
+        comment = Comment.objects.get(id=request.data['comment_id'])
         comment.is_active = False
         comment.save()
         
@@ -46,3 +46,18 @@ class CommentDelete(APIView):
             "message": "댓글 삭제 완료",
         }
         return Response(datas,status=status.HTTP_200_OK)
+    
+
+class ReCommentWrite(APIView):
+    def post(self, request):
+
+        user = User.objects.get(email='test1@gmail.com')
+        post = Post.objects.get(id=request.data['post_id'])
+        parent_comment = Comment.objects.get(id=request.data['comment_id'])
+        
+        comment = Comment.objects.create(writer=user,content=request.data['content'],post=post,parent_comment=parent_comment)
+        
+        datas = {
+            "message": "대댓글 생성 완료",
+        }
+        return Response(datas,status=status.HTTP_201_CREATED)
