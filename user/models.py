@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils import timezone
 
@@ -25,12 +27,9 @@ class UserManager(BaseUserManager):
         return user
     
     # create_superuser
-    def create_superuser(self, email, password, **extra_fields):
-        user = self.create_user(email, password=password)
-        user.is_superuser = True
-        user.is_staff = True
+    def create_superuser(self, email, password=None, **extra_fields):
+        user = self.create_user(email, password=password, is_superuser = True, is_staff = True)
 
-        user.save(using=self._db)
         return user
 
 
@@ -57,6 +56,13 @@ class Profile(models.Model):
     profileImage = models.ImageField(upload_to='user/media',null=True,blank=True)
     about = models.TextField(default='자신을 소개해주세요 :)',null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+def on_post_save_for_user(sender, **kwargs):
+    if kwargs['created']:
+        user = kwargs['instance']
+        Profile.objects.create(user=user)
+
+post_save.connect(on_post_save_for_user, sender=settings.AUTH_USER_MODEL)
 
 
 class Follower(models.Model):

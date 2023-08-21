@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate
-from .serializers import JoinSerializer
+from .serializers import JoinSerializer, ProfileSerializer
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from .tokens import create_jwt_pair_for_user
 from .models import Profile
 
@@ -19,13 +20,13 @@ class JoinView(generics.GenericAPIView):
         serializer = self.serializer_class(data=data)
 
         if serializer.is_valid():
-            user = serializer.save()
-            profile = Profile.objects.create(user=user, profileImage='none')
+            serializer.save()
             response = {"message": "회원가입 성공", "data": serializer.data}
 
             return Response(data=response, status=status.HTTP_201_CREATED)
         
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class LoginView(APIView):
     permission_classes = []
@@ -46,3 +47,20 @@ class LoginView(APIView):
     def get(self, request:Request):
         content = {"user": str(request.user), "auth": str(request.auth)}
         return Response(date=content, status=status.HTTP_200_OK)
+
+
+class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user_profile = get_object_or_404(Profile, user=request.user)
+        serializer = ProfileSerializer(user_profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        user_profile = get_object_or_404(Profile, user=request.user)
+        serializer = ProfileSerializer(user_profile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

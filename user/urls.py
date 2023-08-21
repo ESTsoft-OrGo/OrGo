@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import JoinView, LoginView
+from .views import JoinView, LoginView, ProfileView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -14,7 +14,7 @@ urlpatterns = [
     path('jwt/create/', TokenObtainPairView.as_view(), name='token_create'),
     path('jwt/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('jwt/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    # path("profile/", Profile.as_view(), name="profile"),
+    path("profile/", ProfileView.as_view(), name="profile"),
     # path("follow/", Follow.as_view(), name="follow"),
     # path("unfollow/", Unfollow.as_view(), name="unfollow"),
 ]

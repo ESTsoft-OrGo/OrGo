@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import ValidationError
 from rest_framework.authtoken.models import Token
-from .models import User
+from .models import User, Profile
 
 
 class JoinSerializer(serializers.ModelSerializer):
@@ -30,3 +30,10 @@ class JoinSerializer(serializers.ModelSerializer):
         Token.objects.create(user=user)
 
         return user
+    
+
+class ProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Profile
+        exclude = ['user']
