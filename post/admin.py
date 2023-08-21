@@ -1,13 +1,5 @@
 from django.contrib import admin
-<<<<<<< HEAD
-from .models import Post, Comment, Like
-
-# Register your models here.
-admin.site.register(Post)
-admin.site.register(Comment)
-admin.site.register(Like)
-=======
-from .models import User, Post, Like
+from .models import User, Post, Like, Comment
 
 # 좋아요 기능 확인용
 
@@ -36,4 +28,5 @@ class PostAdmin(admin.ModelAdmin):
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Post, PostAdmin)
->>>>>>> origin/sarang
+admin.site.register(Comment)
+admin.site.register(Like)

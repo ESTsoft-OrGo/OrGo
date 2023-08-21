@@ -1,13 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-<<<<<<< HEAD
 from .models import Post, Comment
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 # Create your views here.
-
 
 class CommentWrite(APIView):
     def post(self, request):
@@ -62,7 +60,6 @@ class ReCommentWrite(APIView):
             "message": "대댓글 생성 완료",
         }
         return Response(datas,status=status.HTTP_201_CREATED)
-=======
 from django.shortcuts import get_object_or_404, render
 from .models import Post, Like
 from django.views import View
@@ -131,4 +128,3 @@ class Like(APIView):
             return Response({"detail": "Post unliked successfully."}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "You haven't liked this post before."}, status=status.HTTP_400_BAD_REQUEST)
->>>>>>> origin/sarang
