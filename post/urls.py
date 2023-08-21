@@ -13,9 +13,9 @@ urlpatterns = [
     # 검색
     # path("search/", Search.as_view(), name="search"),
     # 댓글
-    # path("comment/write/", CommentWrite.as_view(), name="cm-write"),
-    # path("comment/delete/", CommentDelete.as_view(), name="cm-delete"),
-    # path("comment/edit/", CommentEdit.as_view(), name="cm-edit"),
+    path("comment/write/", CommentWrite.as_view(), name="cm-write"),
+    path("comment/delete/", CommentDelete.as_view(), name="cm-delete"),
+    path("comment/edit/", CommentEdit.as_view(), name="cm-edit"),
     # 좋아요
     path("like/", LikeView.as_view(), name="like"),    
     # 좋아요 기능 확인용
