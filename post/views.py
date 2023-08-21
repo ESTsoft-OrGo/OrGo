@@ -8,6 +8,10 @@ from .models import Post, Like
 from django.views import View
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
+from rest_framework.response import Response
+from .serializers import PostSerializer, Post_editSerializer
+from rest_framework import generics
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, DestroyAPIView
 
 User = get_user_model()
 # Create your views here.
@@ -98,3 +102,34 @@ class Like(APIView):
             return Response({"detail": "Post liked successfully."}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": "You've already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+## Post
+
+class List(ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    
+
+class Write(CreateAPIView):
+    # permission_classes = [IsAuthenticated]
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+
+class Edit(generics.RetrieveUpdateAPIView):
+    # permission_classes = [IsAuthenticated]
+    lookup_field = 'pk'
+    queryset = Post.objects.all()
+    serializer_class = Post_editSerializer
+
+
+class Delete(DestroyAPIView):
+    # permission_classes = [IsAuthenticated]
+    lookup_field = 'pk'
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    
+
+class View(RetrieveAPIView):
+    lookup_field = 'pk'
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
