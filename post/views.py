@@ -1,29 +1,21 @@
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
-from .models import Post, Comment
-from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404, render
-from .models import Post
-from .models import Like as LikeModel
-from django.views import View
-from rest_framework.permissions import IsAuthenticated
-from django.contrib.auth import get_user_model
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
+from .models import Post, Like as Like_Model, Comment
 from .serializers import PostSerializer, Post_editSerializer
-from rest_framework import generics
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, DestroyAPIView
 
 
 User = get_user_model()
 # Create your views here.
 
 class CommentWrite(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def post(self, request):
-        # user = request.user
-        print("Postman Test")
-
-        user = User.objects.get(email='test1@gmail.com')
+        user = request.user
         post = Post.objects.get(id=request.data['post_id'])
         
         comment = Comment.objects.create(writer=user,content=request.data['content'],post=post,parent_comment=None)
@@ -35,6 +27,8 @@ class CommentWrite(APIView):
 
 
 class CommentEdit(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def post(self, request):
         comment = Comment.objects.get(id=request.data['comment_id'])
         comment.content = request.data['comment']
@@ -43,10 +37,13 @@ class CommentEdit(APIView):
         datas = {
             "message": "댓글 수정 완료",
         }
+        
         return Response(datas,status=status.HTTP_200_OK)
 
 
 class CommentDelete(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def post(self, request):
         comment = Comment.objects.get(id=request.data['comment_id'])
         comment.is_active = False
@@ -59,9 +56,10 @@ class CommentDelete(APIView):
     
 
 class ReCommentWrite(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def post(self, request):
-
-        user = User.objects.get(email='test1@gmail.com')
+        user = request.user
         post = Post.objects.get(id=request.data['post_id'])
         parent_comment = Comment.objects.get(id=request.data['comment_id'])
         
@@ -81,7 +79,7 @@ class Unlike(APIView):
         user = request.user
 
         post = get_object_or_404(Post, pk=post_id)
-        like = LikeModel.objects.filter(post=post, user=user).first()
+        like = Like_Model.objects.filter(post=post, user=user).first()
 
         if like:
             like.delete()
@@ -98,14 +96,14 @@ class Like(APIView):
         user = request.user
 
         post = get_object_or_404(Post, pk=post_id)
-        like, created = LikeModel.objects.get_or_create(post=post, user=user)
+        like, created = Like_Model.objects.get_or_create(post=post, user=user)
 
         if created:
             return Response({"detail": "Post liked successfully."}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": "You've already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
-## Post
 
+## Post
 class List(APIView):
     def post(self, request):
         posts = Post.objects.all().values()
@@ -129,7 +127,7 @@ class List(APIView):
         }
         
         return Response(data,status=status.HTTP_200_OK)
-
+    
 
 class Write(APIView):
     permission_classes = [IsAuthenticated]
@@ -153,7 +151,7 @@ class Write(APIView):
         return Response(data,status=status.HTTP_201_CREATED)
 
 
-class Edit(generics.RetrieveUpdateAPIView):
+class Edit(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self,request,pk):
@@ -178,7 +176,7 @@ class Edit(generics.RetrieveUpdateAPIView):
         return Response(data,status=status.HTTP_200_OK)
 
 
-class Delete(DestroyAPIView):
+class Delete(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self,request,pk):
@@ -190,7 +188,7 @@ class Delete(DestroyAPIView):
             "message": "글 삭제 완료"
         }
         return Response(data,status=status.HTTP_200_OK)
-    
+
 
 class View(APIView):
     # 좋아요, 글 정보, 댓글과 대댓글 구분
@@ -198,7 +196,7 @@ class View(APIView):
 
         raw_post = Post.objects.get(id=pk)
         comments = Comment.objects.filter(post=raw_post).values()
-        likes = LikeModel.objects.filter(post=raw_post).count()
+        likes = Like_Model.objects.filter(post=raw_post).count()
         
         post = raw_post.__dict__
         post['_state'] = ""
