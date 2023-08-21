@@ -60,10 +60,11 @@ class FollowerList(APIView):
         # 나를 팔로우 한 사람들
         me = User.objects.get(email='test1@gmail.com')
         target = Follower.objects.filter(target_id가=me)
+        
         datas = {
             "message":"followlist"
             }
-            
+        
         return Response(datas, status=status.HTTP_200_OK)
 
 
@@ -78,6 +79,7 @@ class JoinView(generics.GenericAPIView):
 
         if serializer.is_valid():
             serializer.save()
+            
             response = {"message": "회원가입 성공", "data": serializer.data}
 
             return Response(data=response, status=status.HTTP_201_CREATED)
