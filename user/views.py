@@ -93,12 +93,22 @@ class LoginView(APIView):
     def post(self, request:Request):
         email = request.data.get("email")
         password = request.data.get("password")
-
         user = authenticate(email=email, password=password)
 
         if user is not None:
+            user1 = User.objects.filter(email=user.email).values()
+            print(user1[0])
+            
+            # user_dict  = user1.__dict__
+            # user_dict['_state'] = user_dict['_state'].__dict__
+            # user_dict['password'] = "Secret"
+            
+            profile = user1.profile
+            profile_dict = profile.__dict__
+            profile_dict['_state'] = profile_dict['_state'].__dict__
+            
             tokens = create_jwt_pair_for_user(user)
-            response = {"message": "로그인 성공", "token": tokens}
+            response = {"message": "로그인 성공", "token": tokens, "user": user1[0],"profile": profile_dict}
             return Response(data=response, status=status.HTTP_200_OK)
         else:
             return Response(data={"message": "이메일과 비밀번호를 다시 확인해 주세요."})
