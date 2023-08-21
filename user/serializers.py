@@ -9,10 +9,11 @@ class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=8, write_only=True)
     profileImage = serializers.ImageField(source='profile.profileImage', read_only=True)
     nickname = serializers.CharField(source='profile.nickname', read_only=True)
+    about = serializers.CharField(source='profile.about', read_only=True)
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'profileImage', 'nickname']
+        fields = ['email', 'password', 'profileImage', 'nickname', 'about']
 
     def validate(self, attrs):
         email_exists=User.objects.filter(email=attrs['email']).exists()
