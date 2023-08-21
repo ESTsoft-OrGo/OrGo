@@ -38,31 +38,6 @@ class Follow(APIView):
             return Response(datas, status=status.HTTP_200_OK)
 
 
-class FollowList(APIView):
-    def get(self, request):
-        # 내가 팔로우한 사람들
-        me = User.objects.get(email='test1@gmail.com')
-        follow = Follower.objects.filter(follower_id=me)
-        datas = {
-            "message":"followlist"
-            }
-            
-        return Response(datas, status=status.HTTP_200_OK)
-
-
-class FollowerList(APIView):
-    def get(self, request):
-        # 나를 팔로우 한 사람들
-        me = User.objects.get(email='test1@gmail.com')
-        target = Follower.objects.filter(target_id가=me)
-        
-        datas = {
-            "message":"followlist"
-            }
-        
-        return Response(datas, status=status.HTTP_200_OK)
-
-
 class Join(APIView):
     permission_classes = []
 
@@ -96,7 +71,6 @@ class Login(APIView):
                 "token": tokens,
                 "user_info": serializer.data,
             }
-            print(type(serializer.data))
             return Response(data=response, status=status.HTTP_200_OK)
         else:
             return Response(data={"message": "이메일과 비밀번호를 다시 확인해 주세요."})
@@ -109,14 +83,26 @@ class MyPage(APIView):
         user_profile = get_object_or_404(Profile, user=request.user)
         serializer = ProfileSerializer(user_profile)
         
-        my_posts = Post.objects.filter(writer=request.user)
-        follower_count = Follower.objects.filter(follower_id=request.user)
-        following_count = Follower.objects.filter(target_id=request.user)
+        my_posts = Post.objects.filter(writer=request.user).values()
+        followers = Follower.objects.filter(follower_id=request.user).values()
+        followings = Follower.objects.filter(target_id=request.user).values()
+        
+        new_followers = []
+        new_followings = []
+        
+        for follower in followers:
+            print(follower)
+            follower_pf = Profile.objects.filter(user=follower['target_id_id']).values()
+            new_followers.append(follower_pf)
+            
+        for following in followings:
+            following_pf = Profile.objects.filter(user=following['follower_id_id']).values()
+            new_followings.append(following_pf)
         
         response = {"serializer": serializer.data,
             "my_posts": my_posts,
-            "follower_count": follower_count,
-            "following_count": following_count}
+            "follower": new_followers,
+            "following": new_followings}
 
         return Response(data=response, status=status.HTTP_200_OK)
 
