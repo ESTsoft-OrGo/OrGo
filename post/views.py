@@ -9,8 +9,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-'''
-# 좋아요 기능 확인용
+
 class PostListView(View):
     template_name = 'post_list.html'
 
@@ -40,9 +39,9 @@ class PostDetailView(View):
         }
 
         return render(request, self.template_name, context)
-'''
 
-class Like(APIView):
+
+class LikeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def create(self, request):
