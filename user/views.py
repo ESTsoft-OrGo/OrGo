@@ -1,19 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from rest_framework import status
-from user.models import User, Follower
-from django.shortcuts import get_object_or_404
-from django.contrib.auth import authenticate
-from .serializers import JoinSerializer, ProfileSerializer
-from rest_framework import generics, status
-from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status, generics
+from .models import User, Profile, Follower
+from .serializers import JoinSerializer, ProfileSerializer
+from post.models import Post
+from post.serializers import PostSerializer
 from .tokens import create_jwt_pair_for_user
-from .models import Profile
 
 # Create your views here.
 class Follow(APIView):
@@ -68,11 +64,11 @@ class FollowerList(APIView):
         return Response(datas, status=status.HTTP_200_OK)
 
 
-class JoinView(generics.GenericAPIView):
+class Join(generics.GenericAPIView):
     serializer_class = JoinSerializer
     permission_classes = []
 
-    def post(self, request:Request):
+    def post(self, request):
         data = request.data
 
         serializer = self.serializer_class(data=data)
@@ -87,10 +83,10 @@ class JoinView(generics.GenericAPIView):
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LoginView(APIView):
+class Login(APIView):
     permission_classes = []
 
-    def post(self, request:Request):
+    def post(self, request):
         email = request.data.get("email")
         password = request.data.get("password")
 
@@ -102,24 +98,36 @@ class LoginView(APIView):
             return Response(data=response, status=status.HTTP_200_OK)
         else:
             return Response(data={"message": "이메일과 비밀번호를 다시 확인해 주세요."})
-        
-    def get(self, request:Request):
-        content = {"user": str(request.user), "auth": str(request.auth)}
-        return Response(date=content, status=status.HTTP_200_OK)
 
 
-class ProfileView(APIView):
+class MyPage(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def post(self, request):
         user_profile = get_object_or_404(Profile, user=request.user)
         serializer = ProfileSerializer(user_profile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        my_posts = Post.objects.filter(writer=request.user)
+        follower_count = Follower.objects.filter(target_id=request.user).count()
+        following_count = Follower.objects.filter(follower_id=request.user).count()
+        
+        return Response({
+            "serializer": serializer.data,
+            "my_posts": my_posts,
+            "follower_count": follower_count,
+            "following_count": following_count
+        }, status=status.HTTP_200_OK)
 
-    def put(self, request):
+
+class ProfileSave(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
         user_profile = get_object_or_404(Profile, user=request.user)
         serializer = ProfileSerializer(user_profile, data=request.data)
+        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
