@@ -10,3 +10,8 @@ class LikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
         fields = '__all__'
+
+class Post_editSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'postImage']
