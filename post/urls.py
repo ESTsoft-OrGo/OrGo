@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import LikeView #,PostListView, PostDetailView #List, Write ,Edit, Delete, View, Search, CommentWrite, CommentDelete, CommentEdit, 
+from .views import CommentWrite, CommentDelete, CommentEdit, ReCommentWrite, Like, Unlike
 
 app_name = 'post'
 
@@ -10,14 +10,17 @@ urlpatterns = [
     # path("edit/", Edit.as_view(), name="edit"),
     # path("delete/", Delete.as_view(), name="delete"),
     # path("view/", View.as_view(), name="view"),
-    # 검색
+    # # 검색
     # path("search/", Search.as_view(), name="search"),
     # 댓글
-    # path("comment/write/", CommentWrite.as_view(), name="cm-write"),
-    # path("comment/delete/", CommentDelete.as_view(), name="cm-delete"),
-    # path("comment/edit/", CommentEdit.as_view(), name="cm-edit"),
+    path("comment/write/", CommentWrite.as_view(), name="cm-write"),
+    path("comment/delete/", CommentDelete.as_view(), name="cm-delete"),
+    path("comment/edit/", CommentEdit.as_view(), name="cm-edit"),
+    # 대댓글
+    path("re-comment/write/", ReCommentWrite.as_view(), name="r-cm-write"),
     # 좋아요
-    path("like/", LikeView.as_view(), name="like"),    
+    path("like/", Like.as_view(), name="like"),    
+    path("unlike/", Unlike.as_view(), name="unlike"),    
     # 좋아요 기능 확인용
     # path("", PostListView.as_view(), name='post-list'),
     # path("<int:post_id>/", PostDetailView.as_view(), name="post-details"),
