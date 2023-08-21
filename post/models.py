@@ -12,6 +12,7 @@ class Post(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    likes = models.ManyToManyField(User, related_name='liked_posts', through='Like')
 
 
 class Comment(models.Model):
@@ -26,5 +27,4 @@ class Comment(models.Model):
 class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    is_active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
