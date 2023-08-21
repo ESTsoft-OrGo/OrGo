@@ -4,13 +4,15 @@ from rest_framework.authtoken.models import Token
 from .models import User, Profile
 
 
-class JoinSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     email = serializers.CharField(max_length=80)
     password = serializers.CharField(min_length=8, write_only=True)
+    profileImage = serializers.ImageField(source='profile.profileImage', read_only=True)
+    nickname = serializers.CharField(source='profile.nickname', read_only=True)
 
     class Meta:
         model = User
-        fields = ['email', 'password']
+        fields = ['email', 'password', 'profileImage', 'nickname']
 
     def validate(self, attrs):
         email_exists=User.objects.filter(email=attrs['email']).exists()

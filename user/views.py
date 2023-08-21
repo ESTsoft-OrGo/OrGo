@@ -4,11 +4,10 @@ from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import status, generics
+from rest_framework import status
 from .models import User, Profile, Follower
-from .serializers import JoinSerializer, ProfileSerializer
+from .serializers import UserSerializer, ProfileSerializer
 from post.models import Post
-from post.serializers import PostSerializer
 from .tokens import create_jwt_pair_for_user
 
 # Create your views here.
@@ -64,14 +63,11 @@ class FollowerList(APIView):
         return Response(datas, status=status.HTTP_200_OK)
 
 
-class Join(generics.GenericAPIView):
-    serializer_class = JoinSerializer
+class Join(APIView):
     permission_classes = []
 
     def post(self, request):
-        data = request.data
-
-        serializer = self.serializer_class(data=data)
+        serializer = UserSerializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save()
@@ -94,7 +90,13 @@ class Login(APIView):
 
         if user is not None:
             tokens = create_jwt_pair_for_user(user)
-            response = {"message": "로그인 성공", "token": tokens}
+            serializer = UserSerializer(user)
+            response = {
+                "message": "로그인 성공",
+                "token": tokens,
+                "user_info": serializer.data,
+            }
+            print(type(serializer.data))
             return Response(data=response, status=status.HTTP_200_OK)
         else:
             return Response(data={"message": "이메일과 비밀번호를 다시 확인해 주세요."})
@@ -108,15 +110,15 @@ class MyPage(APIView):
         serializer = ProfileSerializer(user_profile)
         
         my_posts = Post.objects.filter(writer=request.user)
-        follower_count = Follower.objects.filter(target_id=request.user).count()
-        following_count = Follower.objects.filter(follower_id=request.user).count()
+        follower_count = Follower.objects.filter(follower_id=request.user)
+        following_count = Follower.objects.filter(target_id=request.user)
         
-        return Response({
-            "serializer": serializer.data,
+        response = {"serializer": serializer.data,
             "my_posts": my_posts,
             "follower_count": follower_count,
-            "following_count": following_count
-        }, status=status.HTTP_200_OK)
+            "following_count": following_count}
+
+        return Response(data=response, status=status.HTTP_200_OK)
 
 
 class ProfileSave(APIView):
