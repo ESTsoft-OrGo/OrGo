@@ -108,10 +108,12 @@ class Like(APIView):
 class List(APIView):
     def post(self, request):
         posts = Post.objects.filter(is_active=True).order_by('-created_at').values()
+        recent_posts = Post.objects.filter(is_active=True).order_by('-created_at').values()[:5]
         
         new_posts = []
         for post in posts:
             writer = User.objects.get(id=post["writer_id"])
+            likes = Like_Model.objects.filter(post_id=post["id"]).count()
             profile = writer.profile
             
             pf_info = profile.__dict__
@@ -119,12 +121,14 @@ class List(APIView):
             
             post_info = {
                 "post": post,
-                "writer": pf_info
+                "writer": pf_info,
+                "likes": likes
             }
             new_posts.append(post_info)
         
         data = {
-            "posts": new_posts
+            "posts": new_posts,
+            "recent_posts": recent_posts
         }
         
         return Response(data,status=status.HTTP_200_OK)
@@ -136,6 +140,8 @@ class Write(APIView):
     def post(self,request):
         user = request.user
         post = Post.objects.create(title=request.data['title'],content=request.data['content'],writer=user)
+        
+        print(request.data['content'])
         
         try:
             postImage = request.FILES['postImage']
@@ -197,15 +203,24 @@ class View(APIView):
 
         raw_post = Post.objects.get(id=pk)
         comments = Comment.objects.filter(post=raw_post).values()
-        likes = Like_Model.objects.filter(post=raw_post).count()
+        likes = Like_Model.objects.filter(post=raw_post).values()
         writer = Profile.objects.filter(user=raw_post.writer_id).values()
+        
+        comments_infos = []
+        
+        for comment in comments:
+            comments_info = {} 
+            comment_writer = Profile.objects.filter(user=comment['writer_id']).values()
+            comments_info['comment'] = comment
+            comments_info['writer'] = comment_writer[0]
+            comments_infos.append(comments_info)
         
         post = raw_post.__dict__
         post['_state'] = ""
         
         data = {
             "post": post,
-            "comments": comments,
+            "comments": comments_infos,
             "likes": likes,
             "writer": writer[0]
         }
