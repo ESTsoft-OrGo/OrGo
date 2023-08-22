@@ -17,13 +17,14 @@ class Study(models.Model):
         ]
     online_offline = models.CharField(max_length=5, choices=ON_OFF_CHOICES)
 
-    location = models.CharField()
+    # charfields -> max_length 필수 여서 임의로 추가해놈
+    location = models.CharField(max_length = 255)
     max_participants = models.IntegerField(default=0)
     
     STATUS_CHOICES = [
-        ('종료', '종료')
-        ('모집중', '모집중')
-        ('진행중','진행중')
+        ('종료', '종료'),
+        ('모집중', '모집중'),
+        ('진행중','진행중'),
     ]
     status = models.CharField(max_length=5, choices=STATUS_CHOICES)
     
