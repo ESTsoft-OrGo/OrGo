@@ -159,11 +159,12 @@ class ChangePassword(APIView):
 class Delete(APIView):
     permission_classes = [IsAuthenticated]
 
-    def delete(self, request):
+    def post(self, request):
         user = request.user
         refresh_token = RefreshToken.for_user(user)
         refresh_token.blacklist()
-        user.delete()
+        user.is_active = False
+        user.save()
 
         response = {"message": "회원탈퇴 완료"}
         return Response(data=response, status=status.HTTP_200_OK)

@@ -3,7 +3,8 @@ from .views import Join, Login, MyPage, ProfileSave, Follow, Delete, ChangePassw
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
-    TokenVerifyView
+    TokenVerifyView,
+    TokenBlacklistView
 )
 app_name = 'user'
 
@@ -14,6 +15,7 @@ urlpatterns = [
     path('jwt/create/', TokenObtainPairView.as_view(), name='token_create'),
     path('jwt/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('jwt/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('jwt/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),
     path("profile/", MyPage.as_view(), name="profile"),
     path("profile/update/", ProfileSave.as_view(), name="update"),
     path("profile/change-password/", ChangePassword.as_view(), name="change-password"),
