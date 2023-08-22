@@ -12,28 +12,37 @@ from .tokens import create_jwt_pair_for_user
 
 # Create your views here.
 class Follow(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def post(self, request):
         # me = User.objects.get(email='test1@gmail.com')
-        me1 = request.data['me']
-        me = User.objects.get(email=me1)
+        me = request.user
         # 프로필 들어갔을 때나 게시글 작성자 user id
         # you = User.objects.get(email='test2@gmail.com')
-        you1 = request.data['you']
-        you = User.objects.get(email=you1)
+        you = User.objects.get(id=request.data['you'])
+        
         # 해당 프로필 user id하고 로그인한 id가 Follower에 들어가 있을 때 
-        following =  Follower.objects.filter(follower_id=me, target_id=you)
+        following = Follower.objects.filter(follower_id=me, target_id=you)
+        
         if not following:
-            follow = Follower.objects.create(follower_id= me, target_id=you, is_active=True)
+            follow = Follower.objects.create(follower_id=me, target_id=you, is_active=True)
+            
+            new_following = Follower.objects.filter(follower_id=me).values()
             
             datas = {
-            "message":"follow"
+                "message":"follow",
+                "new_following": new_following
             }
             
             return Response(datas, status=status.HTTP_200_OK)
         else:
             unfollow = following.delete()
+            
+            new_following = Follower.objects.filter(follower_id=me).values()
+            
             datas = {
-                "message":"unfollow"
+                "message":"unfollow",
+                "new_following": new_following
             }
             return Response(datas, status=status.HTTP_200_OK)
 
@@ -66,10 +75,12 @@ class Login(APIView):
         if user is not None:
             tokens = create_jwt_pair_for_user(user)
             serializer = UserSerializer(user)
+            follower = Follower.objects.filter(follower_id=user).values()
             response = {
                 "message": "로그인 성공",
                 "token": tokens,
                 "user_info": serializer.data,
+                "follower": follower
             }
             return Response(data=response, status=status.HTTP_200_OK)
         else:
@@ -83,19 +94,20 @@ class MyPage(APIView):
         user_profile = get_object_or_404(Profile, user=request.user)
         serializer = ProfileSerializer(user_profile)
         
-        my_posts = Post.objects.filter(writer=request.user).values()
-        followers = Follower.objects.filter(follower_id=request.user).values()
-        followings = Follower.objects.filter(target_id=request.user).values()
+        my_posts = Post.objects.filter(writer=request.user,is_active=True).order_by('-created_at').values()
+        
+        followers = Follower.objects.filter(target_id=request.user).values()
+        followings = Follower.objects.filter(follower_id=request.user).values()
         
         new_followers = []
         new_followings = []
         
         for follower in followers:
-            follower_pf = Profile.objects.filter(user=follower['target_id_id']).values()
+            follower_pf = Profile.objects.filter(user=follower['follower_id_id']).values()
             new_followers.append(follower_pf)
             
         for following in followings:
-            following_pf = Profile.objects.filter(user=following['follower_id_id']).values()
+            following_pf = Profile.objects.filter(user=following['target_id_id']).values()
             new_followings.append(following_pf)
         
         response = {"serializer": serializer.data,
