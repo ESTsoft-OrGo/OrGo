@@ -91,7 +91,6 @@ class MyPage(APIView):
         new_followings = []
         
         for follower in followers:
-            print(follower)
             follower_pf = Profile.objects.filter(user=follower['target_id_id']).values()
             new_followers.append(follower_pf)
             

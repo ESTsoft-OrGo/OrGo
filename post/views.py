@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from .models import Post, Like as Like_Model, Comment
 from .serializers import PostSerializer, Post_editSerializer
+from user.models import Profile
 
 
 User = get_user_model()
@@ -106,7 +107,7 @@ class Like(APIView):
 ## Post
 class List(APIView):
     def post(self, request):
-        posts = Post.objects.all().values()
+        posts = Post.objects.filter(is_active=True).order_by('-created_at').values()
         
         new_posts = []
         for post in posts:
@@ -197,6 +198,7 @@ class View(APIView):
         raw_post = Post.objects.get(id=pk)
         comments = Comment.objects.filter(post=raw_post).values()
         likes = Like_Model.objects.filter(post=raw_post).count()
+        writer = Profile.objects.filter(user=raw_post.writer_id).values()
         
         post = raw_post.__dict__
         post['_state'] = ""
@@ -204,7 +206,8 @@ class View(APIView):
         data = {
             "post": post,
             "comments": comments,
-            "likes": likes
+            "likes": likes,
+            "writer": writer[0]
         }
         
         return Response(data,status=status.HTTP_200_OK)
