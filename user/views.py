@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from .models import User, Profile, Follower
 from .serializers import UserSerializer, ProfileSerializer
@@ -96,7 +97,7 @@ class Login(APIView):
                 "token": tokens,
                 "user_info": serializer.data,
             }
-            print(type(serializer.data))
+
             return Response(data=response, status=status.HTTP_200_OK)
         else:
             return Response(data={"message": "이메일과 비밀번호를 다시 확인해 주세요."})
@@ -117,7 +118,6 @@ class MyPage(APIView):
             "my_posts": my_posts,
             "follower_count": follower_count,
             "following_count": following_count}
-
         return Response(data=response, status=status.HTTP_200_OK)
 
 
@@ -133,3 +133,37 @@ class ProfileSave(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePassword(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        current_password = request.data.get("current_password")
+        new_password = request.data.get("new_password")
+
+        if not user.check_password(current_password):
+            return Response(
+                data={"message": "현재 비밀번호가 일치하지 않습니다."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user.set_password(new_password)
+        user.save()
+
+        response = {"message": "비밀번호 변경이 완료되었습니다."}
+        return Response(data=response, status=status.HTTP_200_OK)
+
+
+class Delete(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        user = request.user
+        refresh_token = RefreshToken.for_user(user)
+        refresh_token.blacklist()
+        user.delete()
+
+        response = {"message": "회원탈퇴 완료"}
+        return Response(data=response, status=status.HTTP_200_OK)
