@@ -20,10 +20,6 @@ urlpatterns = [
     path("re-comment/write/", ReCommentWrite.as_view(), name="r-cm-write"),
     # 좋아요
     path("like/", Like.as_view(), name="like"),    
-    path("unlike/", Unlike.as_view(), name="unlike"),    
-    # 좋아요 기능 확인용
-    # path("", PostListView.as_view(), name='post-list'),
-    # path("<int:post_id>/", PostDetailView.as_view(), name="post-details"),
-    # path("search/", Search.as_view(), name="search"),
+    path("unlike/", Unlike.as_view(), name="unlike"),  
 ]
 
