@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from .models import User, Profile, Follower
 from .serializers import UserSerializer, ProfileSerializer
-from post.models import Post
+from post.models import Post , Like
 from .tokens import create_jwt_pair_for_user
 
 # Create your views here.
@@ -96,6 +96,15 @@ class MyPage(APIView):
         
         my_posts = Post.objects.filter(writer=request.user,is_active=True).order_by('-created_at').values()
         
+        posts = []
+        for post in my_posts:
+            likes = Like.objects.filter(post_id=post["id"]).count()
+            post_info = {
+                "post": post,
+                "likes": likes
+            }
+            posts.append(post_info)
+        
         followers = Follower.objects.filter(target_id=request.user).values()
         followings = Follower.objects.filter(follower_id=request.user).values()
         
@@ -111,7 +120,7 @@ class MyPage(APIView):
             new_followings.append(following_pf)
         
         response = {"serializer": serializer.data,
-            "my_posts": my_posts,
+            "my_posts": posts,
             "follower": new_followers,
             "following": new_followings}
 
