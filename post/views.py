@@ -145,8 +145,6 @@ class Write(APIView):
         user = request.user
         post = Post.objects.create(title=request.data['title'],content=request.data['content'],writer=user)
         
-        print(request.data['content'])
-        
         try:
             postImage = request.FILES['postImage']
         except:
