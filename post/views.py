@@ -169,7 +169,6 @@ class Edit(APIView):
         except:
             post.title = request.data["title"]
             post.content = request.data["content"]
-            post.postImage = None
         else:
             post.title = request.data["title"]
             post.content = request.data["content"]
