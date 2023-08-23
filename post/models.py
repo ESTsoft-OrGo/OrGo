@@ -19,7 +19,7 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE) 
     content = models.CharField(max_length=30)
     writer = models.ForeignKey(User, on_delete=models.CASCADE)
-    parent_comment = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+    parent_comment = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
