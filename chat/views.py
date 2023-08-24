@@ -6,6 +6,7 @@ from django.db.models import Q
 from .models import Room, Message
 from django.contrib.auth import get_user_model
 from user.serializers import UserSerializer
+from user.models import Profile, Follower
 
 User = get_user_model()
 
@@ -22,9 +23,14 @@ class RoomList(APIView):
         
         for room in rooms:
             info = {}
+            message = Message.objects.filter(room=room['id']).order_by('-created_at').values()
+            try:
+                message[0]
+            except:
+                info['recent'] = {'content': '첫 메시지를 보내보세요.'}
+            else:
+                info['recent'] = message[0]
 
-            message = Message.objects.filter(room=room['id']).order_by('-created_at').values()[0]
-            
             if user.id == room['firstuser_id']:
                 target = User.objects.get(pk=room['seconduser_id'])
             elif user.id == room['seconduser_id']:
@@ -32,7 +38,6 @@ class RoomList(APIView):
             
             serializer = UserSerializer(target)
             info['room'] = room
-            info['recent'] = message
             info['target'] = serializer.data
             
             room_list.append(info)
@@ -57,11 +62,26 @@ class RoomJoin(APIView):
             room.title = f'room{room.pk}'
             room.save()
             datas = {
-                "message":"Create Success",
+                "message":"채팅방 생성 성공",
             }
             return Response(datas, status=status.HTTP_200_OK)
         else:
             datas = {
-                "message":"Room is already exists ",
+                "message":"채팅방이 이미 존재합니다.",
             }
             return Response(datas, status=status.HTTP_200_OK)
+
+
+class Following(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self,request):
+        followings = Follower.objects.filter(follower_id=request.user).values()
+        newFollowings = []
+        for following in followings:
+            following_pf = Profile.objects.filter(user=following['target_id_id']).values()
+            newFollowings.append(following_pf)
+        
+        response = {"following": newFollowings}
+
+        return Response(data=response, status=status.HTTP_200_OK)
