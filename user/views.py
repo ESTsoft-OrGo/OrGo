@@ -1,4 +1,5 @@
-from django.shortcuts import render, get_object_or_404
+from django.conf import settings
+from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
@@ -10,6 +11,16 @@ from .models import User, Profile, Follower
 from .serializers import UserSerializer, ProfileSerializer
 from post.models import Post , Like
 from .tokens import create_jwt_pair_for_user
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.github.views import GitHubOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
+
+
+BASE_URL = 'http://127.0.0.1:8000/'
+GOOGLE_CALLBACK_URI = BASE_URL + 'user/login/google/callback/'
+GITHUB_CALLBACK_URI = BASE_URL + 'user/login/github/callback/'
+
 
 # Create your views here.
 class Follow(APIView):
@@ -74,12 +85,12 @@ class Login(APIView):
         user = authenticate(email=email, password=password)
 
         if user is not None:
-            tokens = create_jwt_pair_for_user(user)
+            token = create_jwt_pair_for_user(user)
             serializer = UserSerializer(user)
             follower = Follower.objects.filter(follower_id=user).values()
             response = {
                 "message": "로그인 성공",
-                "token": tokens,
+                "token": token,
                 "user_info": serializer.data,
                 "follower": follower
             }
@@ -175,3 +186,15 @@ class Delete(APIView):
 
         response = {"message": "회원탈퇴 완료"}
         return Response(data=response, status=status.HTTP_200_OK)
+
+
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
+    callback_url = GOOGLE_CALLBACK_URI
+    client_class = OAuth2Client
+
+
+class GitHubLogin(SocialLoginView):
+    adapter_class = GitHubOAuth2Adapter
+    callback_url = GITHUB_CALLBACK_URI
+    client_class = OAuth2Client
