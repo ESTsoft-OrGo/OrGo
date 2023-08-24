@@ -1,8 +1,20 @@
+from django.db.models import Q
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Study
 from django.shortcuts import get_object_or_404
+from .serializers import StudySerializer
+
+class StudySearch(APIView):
+    def post(self, request):
+        keyword = request.data.get('q', '')
+        studies = Study.objects.filter(
+            Q(title__icontains=keyword) | Q(description__icontains=keyword)
+        )
+        serializer = StudySerializer(studies, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class StudyJoin(APIView):
     def post(self, request):
