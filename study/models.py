@@ -18,6 +18,7 @@ class Study(models.Model):
     online_offline = models.CharField(max_length=5, choices=ON_OFF_CHOICES)
 
     location = models.CharField(max_length=200,null=True)
+    # charfields -> max_length 필수 여서 임의로 추가해놈
     max_participants = models.IntegerField(default=0)
     
     STATUS_CHOICES = [
