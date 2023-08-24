@@ -45,7 +45,6 @@ class StudyCreate(APIView):
         request_data['leader'] = user.id
         serializer = StudySerializer(data=request_data)
         
-        # serializer = StudySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             
@@ -60,20 +59,14 @@ class StudyEdit(APIView):
     
     def post(self, request):
         study = Study.objects.get(id=request.data['study_id'])
-        study.title = request.data['title']
-        study.description = request.data['description']
-        study.start_date = request.data['start_date']
-        study.end_date = request.data['end_date']
-        study.online_offline = request.data['online_offline']
-        study.location = request.data['location']
-        study.max_participants = request.data['max_participants']
-        study.status = request.data['status']
-        study.save()
-        data = {
-            "message":'study edit',
-            "data": request.data,
-        }
-        return Response(data, status=status.HTTP_200_OK)
+        
+        serializer = StudySerializer(study, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        errors = serializer.errors
+        return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class StudyDelete(APIView):
@@ -86,5 +79,18 @@ class StudyDelete(APIView):
         
         data = {
             "message": "delete complete"
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class StudyView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        rew_study = Study.objects.get(id=request.data['study_id'])
+        study = rew_study.__dict__
+        study['_state'] = ""
+        data = {
+            "study":study
         }
         return Response(data, status=status.HTTP_200_OK)
