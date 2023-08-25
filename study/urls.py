@@ -18,7 +18,4 @@ urlpatterns = [
     path("tag/write/", TagWrite.as_view(), name='tag_write'),
     path("tag/edit/", TagEdit.as_view(), name='tag_edit'),
     path("tag/delete/", TagDelete.as_view(), name='tag_delete'),
-    # 참가
-    # path("join", StudyJoin.as_view(), name='join'),
-    # path('join/cancel', StudyCancel.as_view(), name='cancel')
 ]
