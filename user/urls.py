@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import Join, Login, MyPage, ProfileSave, Follow, Delete, ChangePassword, GitHubLogin, GoogleLogin
+from .views import Join, Login, MyPage, ProfileSave, Follow, Delete, ChangePassword, GitHubLogin, GoogleLogin, google_login, github_login, google_callback, github_callback
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -21,12 +21,11 @@ urlpatterns = [
     path("profile/change-password/", ChangePassword.as_view(), name="change-password"),
     path("profile/delete/", Delete.as_view(), name="delete"),
 
-    # path('login/google/', google_login.as_view(), name='google_login'),
-    # path('login/google/callback/', google_callback.as_view(), name='google_callback'),
-    path('login/google/finish/', GoogleLogin.as_view(), name='google_login_finish'),
+    path('google/login/', google_login, name='google_login'),
+    path('google/callback/', google_callback, name='google_callback'),
+    path('google/login/finish/', GoogleLogin.as_view(), name='google_login_finish'),
 
-    # path('login/github/', github_login.as_view(), name='github_login'),
-    # path('login/github/callback/', github_callback.as_view(), name='github_callback'),
-    path('login/github/finish/', GitHubLogin.as_view(), name='github_login_finish'),
+    path('github/login/', github_login, name='github_login'),
+    path('github/callback/', github_callback, name='github_callback'),
+    path('github/login/finish/', GitHubLogin.as_view(), name='github_login_finish'),
 ]
-
