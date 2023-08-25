@@ -4,6 +4,7 @@ __pycache__
 *.pot
 *.pyc
 __pycache__/
+*.sqlite3
 db.sqlite3
 db.sqlite3-journal
 media
