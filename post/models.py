@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from notify.models import Notification
+from django.db.models.signals import post_save
 
 User = get_user_model()
 
@@ -29,3 +31,13 @@ class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+def Like_action(sender, **kwargs):
+    if kwargs['created']:
+        like = kwargs['instance']
+        post = like.post
+        content = f'{post.title}에 좋아요를 남겼습니다.'
+        
+        noti = Notification.objects.create(sender=like.user,receiver=post.writer,content=content)
+
+post_save.connect(Like_action, sender=Like)

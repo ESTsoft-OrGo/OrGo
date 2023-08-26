@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'post',
     'study',
     'chat',
+    'notify'
 ]
 
 ACCOUNT_EMAIL_REQUIRED = True

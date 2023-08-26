@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils import timezone
-
+from notify.models import Notification
 
 class UserManager(BaseUserManager):
 
@@ -70,3 +70,11 @@ class Follower(models.Model):
     follower_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower_id')
     is_active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+def follow_action(sender, **kwargs):
+    if kwargs['created']:
+        follow = kwargs['instance']
+        content = f'팔로우 하셨습니다.'
+        noti = Notification.objects.create(sender=follow.follower_id,receiver=follow.target_id,content=content)
+
+post_save.connect(follow_action, sender=Follower)
