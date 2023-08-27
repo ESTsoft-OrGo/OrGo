@@ -17,7 +17,7 @@ class RoomList(APIView):
     
     def post(self, request):
         user = request.user
-        rooms = Room.objects.filter(Q(firstuser=user) | Q(seconduser=user)).values()
+        rooms = Room.objects.filter(Q(firstuser=user) | Q(seconduser=user),is_active=True).values()
         
         room_list = []
         
@@ -55,7 +55,7 @@ class RoomJoin(APIView):
         user = request.user
         target = User.objects.get(pk=request.data['target'])
     
-        rooms = Room.objects.filter(Q(firstuser=user,seconduser=target)| Q(firstuser=target,seconduser=user))
+        rooms = Room.objects.filter(Q(firstuser=user,seconduser=target)| Q(firstuser=target,seconduser=user),is_active=True)
 
         if not rooms:
             room = Room.objects.create(firstuser=user,seconduser=target)
@@ -71,6 +71,25 @@ class RoomJoin(APIView):
             }
             return Response(datas, status=status.HTTP_200_OK)
 
+
+class RoomDelete(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        try:
+            room = Room.objects.get(pk=request.data['target'],is_active=True)
+        except:
+            datas = {
+                "message":"이미 삭제된 채팅방 입니다.",
+            }
+            return Response(datas, status=status.HTTP_200_OK)
+        
+        room.is_active = False
+        room.save()
+        datas = {
+            "message":"채팅방이 삭제 되었습니다..",
+        }
+        return Response(datas, status=status.HTTP_200_OK)
 
 class Following(APIView):
     permission_classes = [IsAuthenticated]
