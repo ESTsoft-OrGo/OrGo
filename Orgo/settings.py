@@ -62,10 +62,14 @@ INSTALLED_APPS = [
     'study',
 ]
 
+# Social auth settings
+GOOGLE_CALLBACK_URI = 'http://127.0.0.1:8000/user/google/login/callback/'
+GITHUB_CALLBACK_URI = 'http://127.0.0.1:8000/user/github/login/callback/'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+SOCIALACCOUNT_LOGIN_ON_GET = True
 
 STATE = os.environ.get('STATE')
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
