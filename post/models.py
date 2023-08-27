@@ -12,6 +12,7 @@ class Post(models.Model):
     content = models.CharField(max_length=200,null=True,blank=True)
     postImage = models.ImageField(upload_to='post/media',null=True,blank=True)
     is_active = models.BooleanField(default=True)
+    views = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     likes = models.ManyToManyField(User, related_name='liked_posts', through='Like')
