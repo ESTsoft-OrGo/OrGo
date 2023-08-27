@@ -1,10 +1,9 @@
-# from django.urls import path
-# from .views import EventPage
-# from django_eventstream.views import events
+from django.urls import path
+from .views import NotifyList
 
-# app_name = 'notify'
+app_name = 'notify'
 
-# urlpatterns = [
-#     path("events/", EventPage.as_view(), name="events"),
-# ]
+urlpatterns = [
+    path("", NotifyList.as_view(), name="events"),
+]
 
