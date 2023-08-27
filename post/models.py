@@ -27,13 +27,22 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+def comment_action(sender, **kwargs):
+    if kwargs['created']:
+        comment = kwargs['instance']
+        post = comment.post
+        content = f'{post.title}에 댓글을 남겼습니다.'
+        
+        noti = Notification.objects.create(sender=comment.writer,receiver=post.writer,content=content)
+
+post_save.connect(comment_action, sender=Comment)
 
 class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     
-def Like_action(sender, **kwargs):
+def like_action(sender, **kwargs):
     if kwargs['created']:
         like = kwargs['instance']
         post = like.post
@@ -41,4 +50,4 @@ def Like_action(sender, **kwargs):
         
         noti = Notification.objects.create(sender=like.user,receiver=post.writer,content=content)
 
-post_save.connect(Like_action, sender=Like)
+post_save.connect(like_action, sender=Like)
