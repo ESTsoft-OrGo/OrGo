@@ -2,11 +2,11 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import Room , Message
 from django.contrib.auth import get_user_model
-from user.serializers import UserSerializer
 
 User = get_user_model()
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    
     async def connect(self):
         
         user = self.scope["user"]

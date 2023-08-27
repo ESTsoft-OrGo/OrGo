@@ -47,9 +47,11 @@ class NotifyConsumer(AsyncWebsocketConsumer):
             'message': message,
         }))
 
+
 @receiver(post_save, sender=Notification)
 def notification_post_save(sender, instance, **kwargs):
     notifications = Notification.objects.filter(receiver=instance.receiver)
+
     new_notifications = []
     for notification in notifications:
         notify_serializer = NotificationSerializer(notification)

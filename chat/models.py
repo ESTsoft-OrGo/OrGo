@@ -21,17 +21,17 @@ class Message(models.Model):
     content = models.CharField(max_length=200,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
-def message_action(sender, **kwargs):
-    if kwargs['created']:
-        message = kwargs['instance']
-        room = message.room
+# def message_action(sender, **kwargs):
+#     if kwargs['created']:
+#         message = kwargs['instance']
+#         room = message.room
         
-        if room.firstuser == message.writer:
-            receiver = room.seconduser
-        else:
-            receiver = room.firstuser
+#         if room.firstuser == message.writer:
+#             receiver = room.seconduser
+#         else:
+#             receiver = room.firstuser
             
-        content = f'메시지를 보내셨습니다.'
-        noti = Notification.objects.create(sender=message.writer,receiver=receiver,content=content)
+#         content = f'메시지를 보내셨습니다.'
+#         noti = Notification.objects.create(sender=message.writer,receiver=receiver,content=content)
 
-post_save.connect(message_action, sender=Message)
+# post_save.connect(message_action, sender=Message)
