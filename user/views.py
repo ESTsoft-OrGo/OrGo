@@ -32,7 +32,7 @@ class Follow(APIView):
             new_following = Follower.objects.filter(follower_id=me).values()
             
             datas = {
-                "message":"follow",
+                "message": "팔로우 추가 하셨습니다.",
                 "new_following": new_following
             }
             
@@ -43,7 +43,7 @@ class Follow(APIView):
             new_following = Follower.objects.filter(follower_id=me).values()
             
             datas = {
-                "message":"unfollow",
+                "message":"팔로우를 해제 하셨습니다.",
                 "new_following": new_following
             }
             return Response(datas, status=status.HTTP_200_OK)
