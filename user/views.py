@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from .models import User, Profile, Follower
+from notify.models import Notification
 from .serializers import UserSerializer, ProfileSerializer
 from post.models import Post , Like
 from .tokens import create_jwt_pair_for_user
@@ -77,11 +78,13 @@ class Login(APIView):
             tokens = create_jwt_pair_for_user(user)
             serializer = UserSerializer(user)
             follower = Follower.objects.filter(follower_id=user).values()
+            notify = Notification.objects.filter(receiver=user).values()
             response = {
                 "message": "로그인 성공",
                 "token": tokens,
                 "user_info": serializer.data,
-                "follower": follower
+                "follower": follower,
+                "notify": notify,
             }
             return Response(data=response, status=status.HTTP_200_OK)
         else:
