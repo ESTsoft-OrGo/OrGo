@@ -55,6 +55,7 @@ class Profile(models.Model):
     nickname = models.CharField(default='닉네임', max_length=50, null=True, blank=True)
     profileImage = models.ImageField(upload_to='user/media',null=True,blank=True)
     about = models.TextField(default='자신을 소개해주세요 :)',null=True, blank=True)
+    is_active = models.BooleanField(default=True)
     updated_at = models.DateTimeField(auto_now=True)
 
 def on_post_save_for_user(sender, **kwargs):

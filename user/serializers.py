@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'profileImage', 'nickname', 'about', 'id']
+        fields = ['email', 'password', 'profileImage', 'nickname', 'about', 'id','login_method']
 
     def validate(self, attrs):
         email_exists=User.objects.filter(email=attrs['email']).exists()

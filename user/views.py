@@ -78,7 +78,7 @@ class Login(APIView):
             tokens = create_jwt_pair_for_user(user)
             serializer = UserSerializer(user)
             follower = Follower.objects.filter(follower_id=user).values()
-            notify = Notification.objects.filter(receiver=user).values()
+            notify = Notification.objects.filter(receiver=user,is_read=False).values()
             response = {
                 "message": "로그인 성공",
                 "token": tokens,
@@ -173,7 +173,10 @@ class Delete(APIView):
         user = request.user
         refresh_token = RefreshToken.for_user(user)
         refresh_token.blacklist()
+        profile = Profile.objects.get(user=user)
+        profile.is_active = False
         user.is_active = False
+        profile.save()
         user.save()
 
         response = {"message": "회원탈퇴 완료"}
