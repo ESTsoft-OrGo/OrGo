@@ -1,12 +1,15 @@
 from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from .models import Study
-from django.shortcuts import get_object_or_404
-from .serializers import StudySerializer
+from .models import Study, Tag
+from .serializers import StudySerializer, TagSerializer
+from django.contrib.auth import get_user_model
+
+User = get_user_model
 
 class StudySearch(APIView):
     def post(self, request):
@@ -130,14 +133,14 @@ class StudyView(APIView):
     
     def post(self, request):
         rew_study = Study.objects.get(id=request.data['study_id'])
-        tags = Tags.objects.filter(Study=rew_study).values()
+        tag = Tag.objects.filter(Study=rew_study).values()
         
         study = rew_study.__dict__
         study['_state'] = ""
         
         data = {
             "study":study,
-            "tags":tags
+            "tag":tag
         }
         return Response(data, status=status.HTTP_200_OK)
 
@@ -173,7 +176,7 @@ class TagEdit(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        tag = Tags.objects.get(id=request.data['tag_id'])
+        tag = Tag.objects.get(id=request.data['tag_id'])
         tag.name = request.data['name']
         tag.save()
         
@@ -188,7 +191,7 @@ class TagDelete(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        tag = Tags.objects.get(id=request.data['tag_id'])
+        tag = Tag.objects.get(id=request.data['tag_id'])
         tag.delete()
         
         data = {
