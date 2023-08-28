@@ -240,10 +240,10 @@ class PostSearch(APIView):
         if query is None:
             return Response({"error": "Missing 'query' parameter"}, status=400)
 
-        profiles = Profile.objects.filter(Q(nickname__icontains=query) | Q(about__icontains=query))
+        profiles = Profile.objects.filter(Q(nickname__icontains=query) | Q(about__icontains=query),is_active=True)
         profile_serializer = ProfileSerializer(profiles, many=True)
         
-        posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query)).order_by('-created_at')
+        posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query),is_active=True).order_by('-created_at')
         post_serializers = PostSerializer(posts, many=True).data
 
         new_postlist = []
