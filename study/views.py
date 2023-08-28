@@ -62,12 +62,9 @@ class StudyList(APIView):
         studies = Study.objects.all().values()
         new_studies = []
         for study in studies:
-            writer = User.objects.get(email="test@gmail.com")
-            # writer = User.objects.get(id=study["leader_id"])
-            profile = writer.profile
-            # profile = UserSerializer(writer)
-            print(profile)
-            pf_info = profile.__dict__
+            writer = User.objects.get(id=study["leader_id"])
+            profile = UserSerializer(writer).data
+            pf_info = profile
             pf_info['_state'] = ""
             
             post_info = {
@@ -83,7 +80,7 @@ class StudyList(APIView):
 
 
 class StudyCreate(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def post(self, request):
         user = request.user
@@ -116,7 +113,7 @@ class StudyCreate(APIView):
 
 
 class StudyEdit(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def post(self, request):
         study = Study.objects.get(id=request.data['study_id'])
@@ -161,7 +158,7 @@ class StudyDelete(APIView):
 
 
 class StudyView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def post(self, request):
         rew_study = Study.objects.get(id=request.data['study_id'])
@@ -175,33 +172,6 @@ class StudyView(APIView):
             "tags":tags
         }
         return Response(data, status=status.HTTP_200_OK)
-
-
-class TagWrite(APIView):
-    permission_classes = [IsAuthenticated]
-    
-    def post(self, request):
-        user = request.user
-        user = User.objects.get(email=user)
-        study_id = request.data.get('Study')
-        serializer = TagSerializer(data=request.data)
-        
-        if serializer.is_valid():
-            try:
-                study = get_object_or_404(Study, id=study_id, leader=user.id)
-            except Http404:
-                data={
-                    "error": "leader가 아닙니다."
-                }
-                return Response(data, status=status.HTTP_404_NOT_FOUND)
-            serializer.save()
-            data = {
-                "message": "tag write complete"
-            }
-            return Response(data, status=status.HTTP_201_CREATED)
-        errors = serializer.errors
-        
-        return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TagEdit(APIView):
