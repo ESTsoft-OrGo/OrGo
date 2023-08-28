@@ -173,11 +173,7 @@ class Delete(APIView):
         user = request.user
         refresh_token = RefreshToken.for_user(user)
         refresh_token.blacklist()
-        profile = Profile.objects.get(user=user)
-        profile.is_active = False
-        user.is_active = False
-        profile.save()
-        user.save()
+        user.delete()
 
         response = {"message": "회원탈퇴 완료"}
         return Response(data=response, status=status.HTTP_200_OK)
