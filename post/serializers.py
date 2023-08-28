@@ -28,11 +28,11 @@ class PostSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class LikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
         fields = '__all__'
+
 
 class Post_editSerializer(serializers.ModelSerializer):
     class Meta:

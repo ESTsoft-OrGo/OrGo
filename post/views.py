@@ -13,8 +13,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
-import shutil
-import os
+
 
 User = get_user_model()
 # Create your views here.
@@ -160,7 +159,7 @@ class Write(APIView):
             'content': request.data['content'],
             'writer': user
         }
-        images = request.FILES.getlist('images')  \
+        images = request.FILES.getlist('images')  
 
         post = Post.objects.create(**post_data)
 
