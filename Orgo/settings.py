@@ -63,20 +63,14 @@ INSTALLED_APPS = [
 ]
 
 # Social auth settings
-GOOGLE_CALLBACK_URI = 'http://127.0.0.1:8000/user/google/login/callback/'
-GITHUB_CALLBACK_URI = 'http://127.0.0.1:8000/user/github/login/callback/'
+GOOGLE_CALLBACK_URI = 'http://127.0.0.1:8000/accounts/google/login/callback/'
+GITHUB_CALLBACK_URI = 'http://127.0.0.1:8000/accounts/github/login/callback/'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 SOCIALACCOUNT_LOGIN_ON_GET = True
 LOGIN_REDIRECT_URL = "/"
-
-STATE = os.environ.get('STATE')
-GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
-GOOGLE_SECRET_KEY = os.environ.get('GOOGLE_SECRET_KEY')
-GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
-GITHUB_SECRET_KEY = os.environ.get('GITHUB_SECRET_KEY')
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -110,8 +104,8 @@ REST_FRAMEWORK = {
 
 REST_AUTH = {
     'USE_JWT': True,
-    # 'JWT_AUTH_COOKIE': 'my-app-auth',
-    # 'JWT_AUTH_REFRESH_COOKIE': 'my-refresh-token',
+    'JWT_AUTH_COOKIE': 'jwt-auth',
+    'JWT_AUTH_REFRESH_COOKIE': 'jwt-refresh-token',
 }
 
 SIMPLE_JWT = {
