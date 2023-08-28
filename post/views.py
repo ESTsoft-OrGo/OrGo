@@ -5,10 +5,16 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from .models import Post, Like as Like_Model, Comment
-from .serializers import PostSerializer, Post_editSerializer
+from user.models import Profile
+from .serializers import PostSerializer
+from user.serializers import ProfileSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.db.models import Q
 
 User = get_user_model()
 # Create your views here.
+
 
 class CommentWrite(APIView):
     permission_classes = [IsAuthenticated]
@@ -105,11 +111,13 @@ class Like(APIView):
 ## Post
 class List(APIView):
     def post(self, request):
-        posts = Post.objects.all().values()
+        posts = Post.objects.filter(is_active=True).order_by('-created_at').values()
+        recent_posts = Post.objects.filter(is_active=True).order_by('-created_at').values()[:5]
         
         new_posts = []
         for post in posts:
             writer = User.objects.get(id=post["writer_id"])
+            likes = Like_Model.objects.filter(post_id=post["id"]).count()
             profile = writer.profile
             
             pf_info = profile.__dict__
@@ -117,12 +125,14 @@ class List(APIView):
             
             post_info = {
                 "post": post,
-                "writer": pf_info
+                "writer": pf_info,
+                "likes": likes
             }
             new_posts.append(post_info)
         
         data = {
-            "posts": new_posts
+            "posts": new_posts,
+            "recent_posts": recent_posts
         }
         
         return Response(data,status=status.HTTP_200_OK)
@@ -161,7 +171,6 @@ class Edit(APIView):
         except:
             post.title = request.data["title"]
             post.content = request.data["content"]
-            post.postImage = None
         else:
             post.title = request.data["title"]
             post.content = request.data["content"]
@@ -172,7 +181,11 @@ class Edit(APIView):
         data = {
             "message": "글 수정 완료"
         }
-        return Response(data,status=status.HTTP_200_OK)
+
+        if status.HTTP_200_OK:
+            return Response(data,status=status.HTTP_200_OK)
+        else: 
+            return Response(data={"message": "다시 수정해주세요."})
 
 
 class Delete(APIView):
@@ -195,15 +208,57 @@ class View(APIView):
 
         raw_post = Post.objects.get(id=pk)
         comments = Comment.objects.filter(post=raw_post).values()
-        likes = Like_Model.objects.filter(post=raw_post).count()
+        likes = Like_Model.objects.filter(post=raw_post).values()
+        writer = Profile.objects.filter(user=raw_post.writer_id).values()
+        
+        comments_infos = []
+        
+        for comment in comments:
+            comments_info = {} 
+            comment_writer = Profile.objects.filter(user=comment['writer_id']).values()
+            comments_info['comment'] = comment
+            comments_info['writer'] = comment_writer[0]
+            comments_infos.append(comments_info)
         
         post = raw_post.__dict__
         post['_state'] = ""
         
         data = {
             "post": post,
-            "comments": comments,
-            "likes": likes
+            "comments": comments_infos,
+            "likes": likes,
+            "writer": writer[0]
         }
         
         return Response(data,status=status.HTTP_200_OK)
+
+    
+class PostSearch(APIView):
+    def post(self, request):
+        query = request.data.get('query') 
+
+        if query is None:
+            return Response({"error": "Missing 'query' parameter"}, status=400)
+
+        profiles = Profile.objects.filter(Q(nickname__icontains=query) | Q(about__icontains=query))
+        profile_serializer = ProfileSerializer(profiles, many=True)
+
+        posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query))
+        post_serializer = PostSerializer(posts, many=True)
+
+        response_data = {
+            "profiles": profile_serializer.data,
+            "posts": post_serializer.data
+        }
+        
+        return Response(response_data)
+
+
+
+
+
+
+
+
+
+

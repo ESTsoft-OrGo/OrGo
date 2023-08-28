@@ -32,27 +32,64 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# 비동기로 Django ORM 사용 가능
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 ALLOWED_HOSTS = ['*']
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'channels',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
 	'rest_framework_simplejwt.token_blacklist',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    # 'allauth.socialaccount.providers.github',
     'corsheaders',
     'user',
     'post',
     'study',
+    'chat',
 ]
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+    }
+}
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -80,6 +117,8 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
     "SIGNING_KEY": SECRET_KEY,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
@@ -103,12 +142,43 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Orgo.wsgi.application'
+ASGI_APPLICATION = 'Orgo.asgi.application'
 
 # CORS_ALLOWED_ORIGINS = [
 #     "http://127.0.0.1:5500",
 # ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Aiven에 연결하기
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [os.environ.get('REIDS_SERVICE_URI', 'redis://localhost:6379')],
+#         },
+#     },
+# }
+
+# Redis cloud에 연결하기
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+                "hosts": [
+                    {
+                        "host": os.environ.get('REDIS_CLOUD_HOST'),
+                        "port": os.environ.get('REDIS_CLOUD_PORT') or 6379,
+                        "password": os.environ.get('REDIS_CLOUD_PASSWORD'),
+                    }
+                ]
+            }
+    },
+}
+
+# host='redis-10011.c294.ap-northeast-1-2.ec2.cloud.redislabs.com',
+# port=10011,
+# password='<password>'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
