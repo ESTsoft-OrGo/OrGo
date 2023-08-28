@@ -160,7 +160,7 @@ class Write(APIView):
             'content': request.data['content'],
             'writer': user
         }
-        images = request.FILES.getlist('images')  # 변경: 'postImage'에서 'images'로 수정
+        images = request.FILES.getlist('images')  \
 
         post = Post.objects.create(**post_data)
 
@@ -184,7 +184,8 @@ class Edit(APIView):
         post.content = request.data.get('content', post.content)
         post.save()
 
-        images_data = request.FILES.getlist('images')  # 변경: 'postImage'에서 'images'로 수정
+        # 변경: 'postImage'에서 'images'로 수정
+        images_data = request.FILES.getlist('images') 
 
         for image_data in images_data:
             PostImage.objects.create(post=post, image=image_data)
@@ -205,7 +206,6 @@ class Delete(APIView):
         except ObjectDoesNotExist:
             raise Http404
         
-        # Delete associated images
         images = post.image.all()
         for image in images:
             image.image.delete()  
@@ -259,11 +259,11 @@ class View(APIView):
 class PostSearch(APIView):
     def post(self, request):
         query = request.data.get('query') 
-
+        
         if query is None:
             return Response({"error": "Missing 'query' parameter"}, status=400)
 
-        profiles = Profile.objects.filter(Q(nickname__icontains=query) | Q(about__icontains=query))
+        profiles = Profile.objects.filter(Q(nickname__icontains=query) | Q(about__icontains=query),is_active=True) 
         profile_serializer = ProfileSerializer(profiles, many=True)
 
         posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query))

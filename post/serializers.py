@@ -7,6 +7,7 @@ class PostImageSerializer(serializers.ModelSerializer):
         model = PostImage
         fields = ['image']
 
+
 class PostSerializer(serializers.ModelSerializer):
     images = PostImageSerializer(many=True, read_only=True)
     def get_images(self, obj):
@@ -25,7 +26,6 @@ class PostSerializer(serializers.ModelSerializer):
             PostImage.objects.create(post=instance, image=image_data)
 
         return instance
-
 
 
 
