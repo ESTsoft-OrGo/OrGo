@@ -224,6 +224,8 @@ class View(APIView):
     def post(self, request, pk):
 
         raw_post = Post.objects.get(id=pk)
+        raw_post.views = raw_post.views + 1
+        raw_post.save()
         comments = Comment.objects.filter(post=raw_post).values()
         likes = Like_Model.objects.filter(post=raw_post).values()
         writer = Profile.objects.filter(user=raw_post.writer_id).values()
@@ -262,15 +264,26 @@ class PostSearch(APIView):
         if query is None:
             return Response({"error": "Missing 'query' parameter"}, status=400)
 
-        profiles = Profile.objects.filter(Q(nickname__icontains=query) | Q(about__icontains=query),is_active=True) 
+        profiles = Profile.objects.filter(Q(nickname__icontains=query) | Q(about__icontains=query),is_active=True)
         profile_serializer = ProfileSerializer(profiles, many=True)
+        
+        posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query),is_active=True).order_by('-created_at')
+        post_serializers = PostSerializer(posts, many=True).data
 
-        posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query))
-        post_serializer = PostSerializer(posts, many=True)
-
+        new_postlist = []
+        for p_s in post_serializers:
+            writer = Profile.objects.get(user=p_s['writer'])
+            writer_info = ProfileSerializer(writer).data
+            info = {
+                'post': p_s,
+                'writer': writer_info
+            }
+            new_postlist.append(info)
+        
+        
         response_data = {
             "profiles": profile_serializer.data,
-            "posts": post_serializer.data
+            "posts": new_postlist
         }
         
         return Response(response_data)

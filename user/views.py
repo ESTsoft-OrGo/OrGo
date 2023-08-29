@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from .models import User, Profile, Follower
+from notify.models import Notification
 from .serializers import UserSerializer, ProfileSerializer
 from post.models import Post , Like
 from .tokens import create_jwt_pair_for_user
@@ -31,7 +32,7 @@ class Follow(APIView):
             new_following = Follower.objects.filter(follower_id=me).values()
             
             datas = {
-                "message":"follow",
+                "message": "팔로우 추가 하셨습니다.",
                 "new_following": new_following
             }
             
@@ -42,7 +43,7 @@ class Follow(APIView):
             new_following = Follower.objects.filter(follower_id=me).values()
             
             datas = {
-                "message":"unfollow",
+                "message":"팔로우를 해제 하셨습니다.",
                 "new_following": new_following
             }
             return Response(datas, status=status.HTTP_200_OK)
@@ -77,11 +78,13 @@ class Login(APIView):
             tokens = create_jwt_pair_for_user(user)
             serializer = UserSerializer(user)
             follower = Follower.objects.filter(follower_id=user).values()
+            notify = Notification.objects.filter(receiver=user,is_read=False).values()
             response = {
                 "message": "로그인 성공",
                 "token": tokens,
                 "user_info": serializer.data,
-                "follower": follower
+                "follower": follower,
+                "notify": notify,
             }
             return Response(data=response, status=status.HTTP_200_OK)
         else:
@@ -170,8 +173,7 @@ class Delete(APIView):
         user = request.user
         refresh_token = RefreshToken.for_user(user)
         refresh_token.blacklist()
-        user.is_active = False
-        user.save()
+        user.delete()
 
         response = {"message": "회원탈퇴 완료"}
         return Response(data=response, status=status.HTTP_200_OK)

@@ -2,11 +2,13 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import Room , Message
 from django.contrib.auth import get_user_model
-from user.serializers import UserSerializer
+from django.db.models import F,Count
+from django.db.models.functions import TruncDay
 
 User = get_user_model()
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    
     async def connect(self):
         
         user = self.scope["user"]
@@ -44,15 +46,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.find_room(self.room_name)
             
             room = Room.objects.get(title=self.room_name)
-            messages = Message.objects.filter(room=room)
+            join_messages = Message.objects.filter(room=room).annotate(day=TruncDay('created_at')).values('day', 'id')
+            join_message = await self.messages_to_json(join_messages)
             
-            real = await self.messages_to_json(messages)
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'chat_message',
-                    'message': real,
-                    'status': 'join'
+                    'status': 'join',
+                    'message': join_message
                 }
             )
         elif method == 'message':
@@ -78,7 +80,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def chat_message(self, event):
         message = event['message']
         status = event['status']
-
         # 웹소켓으로 메세지 보냄
         await self.send(text_data=json.dumps({
             'message': message,
@@ -86,9 +87,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }))
     
     async def messages_to_json(self, messages):
-        result = []
-        
-        for message in messages:
+        # 날짜별로 메시지들을 그룹화
+        message_grouped_by_day = {}
+        for entry in messages:
+            day = entry['day'].strftime('%Y.%m.%d')
+            message = Message.objects.get(id=entry['id'])  # 해당 메시지 가져오기 (필요한 필드에 맞게 변경)
             wrtier_id = message.writer.id
             dict_ = message.__dict__
             data = {
@@ -96,9 +99,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "created_at": str(dict_['created_at']),
                 "writer": wrtier_id
             }
-            result.append(data)
+            if day not in message_grouped_by_day:
+                message_grouped_by_day[day] = [data]
+            else:
+                message_grouped_by_day[day].append(data)
         
-        return result
+        return message_grouped_by_day
     
     async def message_to_json(self, message):
         result = []

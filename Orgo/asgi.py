@@ -7,7 +7,7 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/asgi/
 
 import os
 import chat.routing
-
+import notify.routing
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
@@ -20,7 +20,8 @@ application = ProtocolTypeRouter({
   "websocket": AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter(
-                chat.routing.websocket_urlpatterns
+                chat.routing.websocket_urlpatterns +
+                notify.routing.websocket_urlpatterns
             )
         )
     ),
