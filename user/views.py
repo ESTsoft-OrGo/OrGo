@@ -98,13 +98,23 @@ class MyPage(APIView):
         user_profile = get_object_or_404(Profile, user=request.user)
         serializer = ProfileSerializer(user_profile)
         
-        my_posts = Post.objects.filter(writer=request.user,is_active=True).order_by('-created_at').values()
+        my_posts = Post.objects.filter(writer=request.user,is_active=True).order_by('-created_at')
         
         posts = []
         for post in my_posts:
-            likes = Like.objects.filter(post_id=post["id"]).count()
+            likes = Like.objects.filter(post_id=post.id).count()
+            images = post.image.all()  # 이미지들 가져오기
+            
             post_info = {
-                "post": post,
+                "post": {
+                    "id": post.id,
+                    "title": post.title,
+                    "content": post.content,
+                    "views": post.views,
+                    "images": [{"image": image.image.url} for image in images],
+                    "created_at": post.created_at,
+                    "updated_at": post.updated_at,
+                    },
                 "likes": likes
             }
             posts.append(post_info)
@@ -140,7 +150,8 @@ class ProfileSave(APIView):
         
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            user_serializer = UserSerializer(request.user)
+            return Response(user_serializer.data, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
