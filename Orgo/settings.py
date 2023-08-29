@@ -60,6 +60,8 @@ INSTALLED_APPS = [
     'user',
     'post',
     'study',
+    'chat',
+    'notify'
 ]
 
 # Social auth settings
