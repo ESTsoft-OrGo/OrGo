@@ -70,20 +70,6 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 SOCIALACCOUNT_LOGIN_ON_GET = True
 LOGIN_REDIRECT_URL = "/"
 
-# Email verification settings
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = '587'
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-# EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-# ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-# ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-# EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
-# ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
-# ACCOUNT_EMAIL_SUBJECT_PREFIX = "[ORGO]"
-
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -107,17 +93,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    # 'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.IsAuthenticated', # 인증된 사용자만 접근
-    #     'rest_framework.permissions.IsAdminUser', # 관리자만 접근
-    #     'rest_framework.permissions.AllowAny', # 누구나 접근
-    # ),
 }
 
 REST_AUTH = {
     'USE_JWT': True,
-    # 'JWT_AUTH_COOKIE': 'access_token',
-    # 'JWT_AUTH_REFRESH_COOKIE': 'refresh_token',
 }
 
 SIMPLE_JWT = {
