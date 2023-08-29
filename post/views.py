@@ -4,13 +4,16 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-from .models import Post, Like as Like_Model, Comment
+from .models import Post, Like as Like_Model, Comment, PostImage 
 from user.models import Profile
 from .serializers import PostSerializer
 from user.serializers import ProfileSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404
+
 
 User = get_user_model()
 # Create your views here.
@@ -108,108 +111,123 @@ class Like(APIView):
         else:
             return Response({"detail": "You've already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
 
+
 ## Post
 class List(APIView):
     def post(self, request):
-        posts = Post.objects.filter(is_active=True).order_by('-created_at').values()
-        recent_posts = Post.objects.filter(is_active=True).order_by('-created_at').values()[:5]
+        posts = Post.objects.filter(is_active=True).order_by('-created_at')
+        recent_posts = posts[:5]
         
-        new_posts = []
+        data = []
         for post in posts:
-            writer = User.objects.get(id=post["writer_id"])
-            likes = Like_Model.objects.filter(post_id=post["id"]).count()
-            profile = writer.profile
+            writer = post.writer
+            likes = Like_Model.objects.filter(post_id=post.id).count()
+            profile = writer.profile if hasattr(writer, 'profile') else None
+            images = post.image.all()  # 이미지들 가져오기
             
-            pf_info = profile.__dict__
-            pf_info['_state'] = ""
+            profile_data = ProfileSerializer(profile).data if profile else None
             
             post_info = {
-                "post": post,
-                "writer": pf_info,
+                "id": post.id,
+                "writer": post.writer.id,
+                "title": post.title,
+                "content": post.content,
+                "images": [{"image": image.image.url} for image in images],
+                "is_active": post.is_active,
+                "created_at": post.created_at,
+                "updated_at": post.updated_at,
                 "likes": likes
             }
-            new_posts.append(post_info)
+            data.append(post_info)
         
-        data = {
-            "posts": new_posts,
-            "recent_posts": recent_posts
+        response_data = {
+            "posts": data,
+            "recent_posts": PostSerializer(recent_posts, many=True).data
         }
         
-        return Response(data,status=status.HTTP_200_OK)
-    
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
 
 class Write(APIView):
     permission_classes = [IsAuthenticated]
-    
-    def post(self,request):
+
+    def post(self, request):
         user = request.user
-        post = Post.objects.create(title=request.data['title'],content=request.data['content'],writer=user)
-        
-        try:
-            postImage = request.FILES['postImage']
-        except:
-            post.postImage = None
-        else:
-            post.postImage = postImage
-            
-        post.save()
-        
+        post_data = {
+            'title': request.data['title'],
+            'content': request.data['content'],
+            'writer': user
+        }
+        images = request.FILES.getlist('images')  
+
+        post = Post.objects.create(**post_data)
+
+        for image in images:
+            PostImage.objects.create(post=post, image=image)
+
         data = {
             "message": "글 생성 완료"
         }
-        return Response(data,status=status.HTTP_201_CREATED)
+        return Response(data, status=status.HTTP_201_CREATED)
+
 
 
 class Edit(APIView):
     permission_classes = [IsAuthenticated]
     
-    def post(self,request,pk):
+    def post(self, request, pk):
         post = Post.objects.get(id=pk)
-        
-        try:
-            postImage = request.FILES['postImage']
-        except:
-            post.title = request.data["title"]
-            post.content = request.data["content"]
-        else:
-            post.title = request.data["title"]
-            post.content = request.data["content"]
-            post.postImage = postImage
-            
+
+        post.title = request.data.get('title', post.title)
+        post.content = request.data.get('content', post.content)
         post.save()
-        
+
+        # 변경: 'postImage'에서 'images'로 수정
+        images_data = request.FILES.getlist('images') 
+
+        for image_data in images_data:
+            PostImage.objects.create(post=post, image=image_data)
+
         data = {
             "message": "글 수정 완료"
         }
 
-        if status.HTTP_200_OK:
-            return Response(data,status=status.HTTP_200_OK)
-        else: 
-            return Response(data={"message": "다시 수정해주세요."})
-
+        return Response(data, status=status.HTTP_200_OK)
+    
 
 class Delete(APIView):
     permission_classes = [IsAuthenticated]
     
-    def post(self,request,pk):
-        post = Post.objects.get(id=pk)
+    def post(self, request, pk):
+        try:
+            post = Post.objects.get(id=pk)
+        except ObjectDoesNotExist:
+            raise Http404
+        
+        images = post.image.all()
+        for image in images:
+            image.image.delete()  
+            image.delete()  
+        
         post.is_active = False
         post.save()
         
         data = {
             "message": "글 삭제 완료"
         }
-        return Response(data,status=status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class View(APIView):
     # 좋아요, 글 정보, 댓글과 대댓글 구분
-    def post(self,request,pk):
+    def post(self, request, pk):
 
         raw_post = Post.objects.get(id=pk)
         comments = Comment.objects.filter(post=raw_post).values()
         likes = Like_Model.objects.filter(post=raw_post).values()
         writer = Profile.objects.filter(user=raw_post.writer_id).values()
+        images = raw_post.image.all()  
         
         comments_infos = []
         
@@ -220,27 +238,31 @@ class View(APIView):
             comments_info['writer'] = comment_writer[0]
             comments_infos.append(comments_info)
         
-        post = raw_post.__dict__
-        post['_state'] = ""
+        post_data = PostSerializer(raw_post).data
+        post_data["images"] = [{"image": image.image.url} for image in images]
+        post_data["likes"] = len(likes)
+        
+        writer_data = ProfileSerializer(writer[0]).data if writer else None
         
         data = {
-            "post": post,
+            "post": post_data,
             "comments": comments_infos,
             "likes": likes,
-            "writer": writer[0]
+            "writer": writer_data
         }
         
-        return Response(data,status=status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)
+
 
     
 class PostSearch(APIView):
     def post(self, request):
         query = request.data.get('query') 
-
+        
         if query is None:
             return Response({"error": "Missing 'query' parameter"}, status=400)
 
-        profiles = Profile.objects.filter(Q(nickname__icontains=query) | Q(about__icontains=query))
+        profiles = Profile.objects.filter(Q(nickname__icontains=query) | Q(about__icontains=query),is_active=True) 
         profile_serializer = ProfileSerializer(profiles, many=True)
 
         posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query))
