@@ -63,14 +63,26 @@ INSTALLED_APPS = [
 ]
 
 # Social auth settings
-GOOGLE_CALLBACK_URI = 'http://127.0.0.1:8000/accounts/google/login/callback/'
-GITHUB_CALLBACK_URI = 'http://127.0.0.1:8000/accounts/github/login/callback/'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 SOCIALACCOUNT_LOGIN_ON_GET = True
 LOGIN_REDIRECT_URL = "/"
+
+# Email verification settings
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = '587'
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+# EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+# ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+# EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
+# ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+# ACCOUNT_EMAIL_SUBJECT_PREFIX = "[ORGO]"
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -93,19 +105,19 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY':'errors',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated'
-    ),
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated', # 인증된 사용자만 접근
+    #     'rest_framework.permissions.IsAdminUser', # 관리자만 접근
+    #     'rest_framework.permissions.AllowAny', # 누구나 접근
+    # ),
 }
 
 REST_AUTH = {
     'USE_JWT': True,
-    'JWT_AUTH_COOKIE': 'jwt-auth',
-    'JWT_AUTH_REFRESH_COOKIE': 'jwt-refresh-token',
+    # 'JWT_AUTH_COOKIE': 'access_token',
+    # 'JWT_AUTH_REFRESH_COOKIE': 'refresh_token',
 }
 
 SIMPLE_JWT = {
