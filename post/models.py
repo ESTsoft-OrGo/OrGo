@@ -25,7 +25,7 @@ class Post(models.Model):
 
 # 이미지 업로드 경로
 def image_upload_path(instance, filename):
-    return f'{instance.post.id}/{filename}'
+    return f'post/{instance.post.id}/{filename}'
 
 
 class PostImage(models.Model):

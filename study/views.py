@@ -9,6 +9,7 @@ from django.contrib.auth import get_user_model
 from .models import Study, Tags
 from .serializers import StudySerializer, TagSerializer
 from user.serializers import UserSerializer
+from .pagination import PaginationHandlerMixin, StudyPagination
 # Create your views here.
 
 User = get_user_model()
@@ -57,8 +58,10 @@ class StudyCancel(APIView):
 
 
 ## Study
-class StudyList(APIView):
-    def post(self, request):
+class StudyList(APIView, PaginationHandlerMixin):
+    pagination_class = StudyPagination
+    serializer_class = StudySerializer
+    def get(self, request, format=None, *args, **kwargs):
         studies = Study.objects.all().values()
         new_studies = []
         for study in studies:
@@ -72,11 +75,13 @@ class StudyList(APIView):
                 "writer": pf_info
             }
             new_studies.append(post_info)
-        
-        data = {
-            "studies": new_studies
-        }
-        return Response(data, status=status.HTTP_200_OK)
+
+        page = self.paginate_queryset(new_studies)
+        if page is not None:
+            response_data = self.get_paginated_response(page)
+        else:
+            response_data = self.serializer_class(new_studies, many=True).data
+        return response_data
 
 
 class StudyCreate(APIView):

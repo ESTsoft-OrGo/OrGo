@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import CommentWrite, CommentDelete, CommentEdit, ReCommentWrite, Like, Unlike
-from .views import List, Write, Edit, Delete,  View, PostSearch
+from .views import List, Write, Edit, Delete,  View, PostSearch, RecentPost
 # Search, CommentWrite, CommentDelete, CommentEdit, Like, Unlike
 
 app_name = 'post'
@@ -8,6 +8,7 @@ app_name = 'post'
 urlpatterns = [
     # 게시글
     path("", List.as_view(), name='list'),
+    # path("recent/", RecentPost.as_view(), name='recent_post'),
     path("write/", Write.as_view(), name='write'),
     path('edit/<int:pk>/', Edit.as_view(), name='edit'),
     path('delete/<int:pk>/', Delete.as_view(), name='delete'),
