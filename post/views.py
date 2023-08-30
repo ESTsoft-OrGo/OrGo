@@ -9,7 +9,6 @@ from user.models import Profile
 from .serializers import PostSerializer
 from user.serializers import ProfileSerializer, UserSerializer
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
@@ -114,7 +113,7 @@ class Like(APIView):
 
 ## Post
 class List(APIView):
-    def post(self, request):
+    def get(self, request):
         posts = Post.objects.filter(is_active=True).order_by('-created_at')
         recent_posts = posts[:5]
         
@@ -144,7 +143,18 @@ class List(APIView):
             data.append(add_new)
         
         response_data = {
-            "posts": data,
+            "posts": data
+        }
+        
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
+
+class RecentPost(APIView):
+    def get(self, request):
+        recent_posts = Post.objects.filter(is_active=True).order_by('-created_at')[:5]
+
+        response_data = {
             "recent_posts": PostSerializer(recent_posts, many=True).data
         }
         
@@ -185,8 +195,8 @@ class Edit(APIView):
         post.content = request.data.get('content', post.content)
         post.save()
 
-        prev_imgs = PostImage.objects.filter(post=post) # 추가
-        prev_imgs.delete() # 추가
+        prev_imgs = PostImage.objects.filter(post=post) 
+        prev_imgs.delete() 
         
         # 변경: 'postImage'에서 'images'로 수정
         images_data = request.FILES.getlist('images') 
