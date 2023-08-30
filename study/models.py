@@ -35,5 +35,5 @@ class Study(models.Model):
 
 
 class Tags(models.Model):
-    Study = models.ForeignKey(Study, on_delete=models.CASCADE)
+    study = models.ForeignKey(Study, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
