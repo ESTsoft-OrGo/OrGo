@@ -22,8 +22,6 @@ urlpatterns = [
     path('chat/', include('chat.urls')),
     path('notify/', include('notify.urls')),
     path('admin/', admin.site.urls),
-    path('user/', include('dj_rest_auth.urls')),
-    path('user/', include('allauth.urls')),
     path('user/', include('user.urls')),
     path('post/', include('post.urls')),
     path('study/', include('study.urls')),
