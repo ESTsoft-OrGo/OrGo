@@ -65,16 +65,16 @@ class StudyList(APIView, PaginationHandlerMixin):
         studies = Study.objects.all().values()
         new_studies = []
         for study in studies:
-            writer = User.objects.get(id=study["leader_id"])
-            profile = UserSerializer(writer).data
-            pf_info = profile
-            pf_info['_state'] = ""
-            
-            post_info = {
-                "post": study,
-                "writer": pf_info
+            study_serializer = StudySerializer(study).data
+            leader = User.objects.get(id=study.leader.id)
+            profile = UserSerializer(leader).data
+            tags = Tags.objects.filter(study=study.id).values()
+            study_info = {
+                "study": study_serializer,
+                "leader": profile,
+                "tags": tags
             }
-            new_studies.append(post_info)
+            new_studies.append(study_info)
 
         page = self.paginate_queryset(new_studies)
         if page is not None:
@@ -90,17 +90,16 @@ class StudyCreate(APIView):
     def post(self, request):
         user = request.user
         request_data = request.data.copy()
-        request_data['leader'] = user
+        request_data['leader'] = user.id
+        request_data['is_active'] = True
         serializer = StudySerializer(data=request_data)
-        
         # tag django에서 split으로 ,로 분할 해줌. 
         tags = request.data.get('tags').split(',')
-        
         if serializer.is_valid():
             study = serializer.save()
             for tag in tags:
                 tag_data = {
-                    'Study': study.id,
+                    'study': study.id,
                     'name' : tag
                 }
                 tag_serializer = TagSerializer(data=tag_data)
@@ -108,12 +107,11 @@ class StudyCreate(APIView):
                     tag_serializer.save()
 
             data = {
-                "message" : "study create complete"
+                "message" : "스터디 등록이 완료되었습니다."
             }
             
             return Response(data, status=status.HTTP_201_CREATED)
         errors = serializer.errors
-        
         return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -140,7 +138,7 @@ class StudyEdit(APIView):
                 update_study.save()
             
             data = {
-                "message" : "study edit complete"
+                "message" : "스터디 정보를 수정하였습니다."
             }
             return Response(data, status=status.HTTP_200_OK)
         
@@ -157,26 +155,43 @@ class StudyDelete(APIView):
         study.save()
         
         data = {
-            "message": "study delete complete"
+            "message": "스터디를 삭제하셨습니다."
         }
         return Response(data, status=status.HTTP_200_OK)
 
 
 class StudyView(APIView):
-    permission_classes = [IsAuthenticated]
-    
     def post(self, request):
-        rew_study = Study.objects.get(id=request.data['study_id'])
-        tags = Tags.objects.filter(Study=rew_study).values()
-        
-        study = rew_study.__dict__
-        study['_state'] = ""
+        raw_study = Study.objects.get(id=request.data['study_id'])
+        tags = Tags.objects.filter(study=raw_study).values()
+        leader = UserSerializer(raw_study.leader)
+        study = StudySerializer(raw_study)
         
         data = {
-            "study":study,
-            "tags":tags
+            "study": study.data,
+            "tags": tags,
+            "leader": leader.data
         }
         return Response(data, status=status.HTTP_200_OK)
+
+
+class Tagadd(APIView):
+    # permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        # 태그를 하나씩 받을 때 
+        study_id = Study.objects.get(id=request.data['study_id'])
+        # 태그가 빈 값이여도 공백으로 DB에 저장되서 if else로 나눔.
+        if request.data['name']:
+            tags = Tags.objects.create(study=study_id, name =request.data['name'])
+            data = {
+                "message": "태그 추가 완료",
+            }
+        else:
+            data = {
+                "message": "태그 추가 된게 없습니다.",
+            }
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class TagEdit(APIView):
@@ -188,7 +203,7 @@ class TagEdit(APIView):
         tag.save()
         
         data = {
-            "message": "tag edit complete"
+            "message": "태그 수정을 성공하였습니다."
         }
         
         return Response(data, status=status.HTTP_200_OK)
@@ -202,6 +217,6 @@ class TagDelete(APIView):
         tag.delete()
         
         data = {
-            "message": "tag delete complete"
+            "message": "태그 삭제 성공"
         }
         return Response(data, status=status.HTTP_200_OK)

@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from .models import Post, Like as Like_Model, Comment, PostImage 
 from user.models import Profile
 from .serializers import PostSerializer
-from user.serializers import ProfileSerializer, UserSerializer
+from user.serializers import ProfileSerializer , UserSerializer
 from rest_framework.views import APIView
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
@@ -171,7 +171,6 @@ class Write(APIView):
             'writer': user
         }
         images = request.FILES.getlist('images')  
-
         post = Post.objects.create(**post_data)
 
         for image in images:
@@ -195,7 +194,7 @@ class Edit(APIView):
         post.save()
 
         prev_imgs = PostImage.objects.filter(post=post) 
-        prev_imgs.delete() 
+        prev_imgs.delete()
         
         # 변경: 'postImage'에서 'images'로 수정
         images_data = request.FILES.getlist('images') 
@@ -243,8 +242,7 @@ class View(APIView):
         
         comments = Comment.objects.filter(post=raw_post).values()
         likes = Like_Model.objects.filter(post=raw_post).values()
-        writer = Profile.objects.filter(user=raw_post.writer_id).values() # 이전 
-        writer = User.objects.get(id=raw_post.writer_id) # 이
+        writer = User.objects.get(id=raw_post.writer_id)
         images = raw_post.image.all()  
         
         comments_infos = []
@@ -260,8 +258,7 @@ class View(APIView):
         post_data["images"] = [{"image": image.image.url} for image in images]
         post_data["likes"] = len(likes)
         
-        writer_data = ProfileSerializer(writer[0]).data if writer else None # 이전
-        writer_data = UserSerializer(writer).data if writer else None # 이후
+        writer_data = UserSerializer(writer).data if writer else None
         
         data = {
             "post": post_data,
