@@ -17,18 +17,17 @@ class Study(models.Model):
         ]
     online_offline = models.CharField(max_length=5, choices=ON_OFF_CHOICES)
 
-    location = models.CharField(max_length=200,null=True)
-    # charfields -> max_length 필수 여서 임의로 추가해놈
+    location = models.CharField(max_length=100)
     max_participants = models.IntegerField(default=0)
     
     STATUS_CHOICES = [
         ('종료', '종료'),
         ('모집중', '모집중'),
-        ('진행중','진행중'),
+        ('진행중','진행중')
     ]
     status = models.CharField(max_length=5, choices=STATUS_CHOICES)
     
-    participants = models.ManyToManyField(User, related_name='study_participants', blank=True)
+    participants = models.ForeignKey(User, on_delete=models.CASCADE, related_name='study_participants')
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
