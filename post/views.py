@@ -7,9 +7,8 @@ from django.contrib.auth import get_user_model
 from .models import Post, Like as Like_Model, Comment, PostImage 
 from user.models import Profile
 from .serializers import PostSerializer
-from user.serializers import ProfileSerializer
+from user.serializers import ProfileSerializer , UserSerializer
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
@@ -114,39 +113,53 @@ class Like(APIView):
 
 ## Post
 class List(APIView):
+    
     def post(self, request):
         posts = Post.objects.filter(is_active=True).order_by('-created_at')
-        recent_posts = posts[:5]
         
         data = []
         for post in posts:
+            print('h')
             writer = post.writer
+            profile = UserSerializer(writer)
             likes = Like_Model.objects.filter(post_id=post.id).count()
-            profile = writer.profile if hasattr(writer, 'profile') else None
             images = post.image.all()  # 이미지들 가져오기
-            
-            profile_data = ProfileSerializer(profile).data if profile else None
             
             post_info = {
                 "id": post.id,
-                "writer": post.writer.id,
                 "title": post.title,
                 "content": post.content,
+                "views": post.views,
                 "images": [{"image": image.image.url} for image in images],
-                "is_active": post.is_active,
                 "created_at": post.created_at,
                 "updated_at": post.updated_at,
-                "likes": likes
             }
-            data.append(post_info)
+            
+            add_new = {
+                "post": post_info,
+                "likes": likes,
+                "writer": profile.data
+            }
+            
+            data.append(add_new)
         
         response_data = {
-            "posts": data,
-            "recent_posts": PostSerializer(recent_posts, many=True).data
+            "posts": data
         }
         
         return Response(response_data, status=status.HTTP_200_OK)
 
+
+
+class RecentPost(APIView):
+    def get(self, request):
+        recent_posts = Post.objects.filter(is_active=True).order_by('-created_at')[:5]
+
+        response_data = {
+            "recent_posts": PostSerializer(recent_posts, many=True).data
+        }
+        
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class Write(APIView):
@@ -160,7 +173,6 @@ class Write(APIView):
             'writer': user
         }
         images = request.FILES.getlist('images')  
-
         post = Post.objects.create(**post_data)
 
         for image in images:
@@ -183,6 +195,9 @@ class Edit(APIView):
         post.content = request.data.get('content', post.content)
         post.save()
 
+        prev_imgs = PostImage.objects.filter(post=post) 
+        prev_imgs.delete()
+        
         # 변경: 'postImage'에서 'images'로 수정
         images_data = request.FILES.getlist('images') 
 
@@ -226,9 +241,10 @@ class View(APIView):
         raw_post = Post.objects.get(id=pk)
         raw_post.views = raw_post.views + 1
         raw_post.save()
+        
         comments = Comment.objects.filter(post=raw_post).values()
         likes = Like_Model.objects.filter(post=raw_post).values()
-        writer = Profile.objects.filter(user=raw_post.writer_id).values()
+        writer = User.objects.get(id=raw_post.writer_id)
         images = raw_post.image.all()  
         
         comments_infos = []
@@ -244,7 +260,7 @@ class View(APIView):
         post_data["images"] = [{"image": image.image.url} for image in images]
         post_data["likes"] = len(likes)
         
-        writer_data = ProfileSerializer(writer[0]).data if writer else None
+        writer_data = UserSerializer(writer).data if writer else None
         
         data = {
             "post": post_data,
@@ -254,7 +270,6 @@ class View(APIView):
         }
         
         return Response(data, status=status.HTTP_200_OK)
-
 
     
 class PostSearch(APIView):
@@ -287,9 +302,6 @@ class PostSearch(APIView):
         }
         
         return Response(response_data)
-
-
-
 
 
 

@@ -27,12 +27,12 @@ class Study(models.Model):
     ]
     status = models.CharField(max_length=5, choices=STATUS_CHOICES)
     
-    participants = models.ForeignKey(User, on_delete=models.CASCADE, related_name='study_participants')
+    participants = models.ManyToManyField(User,related_name='study_participants',blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
 
 class Tags(models.Model):
-    Study = models.ForeignKey(Study, on_delete=models.CASCADE)
+    study = models.ForeignKey(Study, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)

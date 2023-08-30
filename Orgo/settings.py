@@ -32,12 +32,13 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 ALLOWED_HOSTS = ['*']
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'channels',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
@@ -75,6 +77,10 @@ REST_FRAMEWORK = {
     ),
 }
 
+REST_AUTH = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+}
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
@@ -103,6 +109,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Orgo.wsgi.application'
+ASGI_APPLICATION = 'Orgo.asgi.application'
 
 # CORS_ALLOWED_ORIGINS = [
 #     "http://127.0.0.1:5500",
@@ -112,6 +119,22 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
+
+# Redis cloud에 연결하기
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+                "hosts": [
+                    {
+                        "host": os.environ.get('REDIS_CLOUD_HOST'),
+                        "port": os.environ.get('REDIS_CLOUD_PORT') or 6379,
+                        "password": os.environ.get('REDIS_CLOUD_PASSWORD'),
+                    }
+                ]
+            }
+    },
+}
 
 DATABASES = {
     'default': {
