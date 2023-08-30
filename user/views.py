@@ -246,7 +246,7 @@ class GoogleCallback(APIView):
             return Response(data=response, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
-            user = User.objects.create(email=email)
+            user = User.objects.create(email=email, login_method='google')
             user.set_unusable_password()
             user.save()
 
@@ -298,9 +298,12 @@ class GithubCallback(APIView):
             return Response(data=response, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
-            user = User.objects.create(email=email)
+            user = User.objects.create(email=email, login_method='github')
             user.set_unusable_password()
             user.save()
 
-            response = {"message": "회원가입 성공", "data": user.data}
+            response = {
+                "message": "회원가입 성공",
+                "user_info": user.data,
+            }
             return Response(data=response, status=status.HTTP_201_CREATED)
