@@ -16,8 +16,10 @@ from .tokens import create_jwt_pair_for_user
 
 
 BASE_URL = 'http://127.0.0.1:8000/user/login/'
-GOOGLE_CALLBACK_URI = BASE_URL + 'google/callback/'
-GITHUB_CALLBACK_URI = BASE_URL + 'github/callback/'
+# GOOGLE_CALLBACK_URI = BASE_URL + 'google/callback/'
+GOOGLE_CALLBACK_URI = 'http://127.0.0.1:5500/src/view/login.html'
+# GITHUB_CALLBACK_URI = BASE_URL + 'github/callback/'
+GITHUB_CALLBACK_URI = 'http://127.0.0.1:5500/src/view/login.html'
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
 GOOGLE_SECRET_KEY = os.environ.get('GOOGLE_SECRET_KEY')
 GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
@@ -212,7 +214,7 @@ class GoogleLogin(APIView):
 
 class GoogleCallback(APIView):
     def post(self, request):
-        code = request.data('code')
+        code = request.data['code']
 
         token_req = requests.post(f"https://oauth2.googleapis.com/token?client_id={GOOGLE_CLIENT_ID}&client_secret={GOOGLE_SECRET_KEY}&code={code}&grant_type=authorization_code&redirect_uri={GOOGLE_CALLBACK_URI}&state={STATE}")
         token_req_json = token_req.json()
@@ -250,7 +252,17 @@ class GoogleCallback(APIView):
             user.set_unusable_password()
             user.save()
 
-            response = {"message": "회원가입 성공", "data": user.data}
+            token = create_jwt_pair_for_user(user)
+            serializer = UserSerializer(user)
+            follower = Follower.objects.filter(follower_id=user).values()
+            notify = Notification.objects.filter(receiver=user,is_read=False).values()
+            response = {
+                "message": "로그인 성공",
+                "token": token,
+                "user_info": serializer.data,
+                "follower": follower,
+                "notify": notify,
+            }
             return Response(data=response, status=status.HTTP_201_CREATED)
 
 
@@ -264,7 +276,7 @@ class GithubLogin(APIView):
 
 class GithubCallback(APIView):
     def post(self, request):
-        code = request.data('code')
+        code = request.data['code']
 
         token_req = requests.post(f"https://github.com/login/oauth/access_token?client_id={GITHUB_CLIENT_ID}&client_secret={GITHUB_SECRET_KEY}&code={code}&accept=&json&redirect_uri={GITHUB_CALLBACK_URI}&response_type=code", headers={'Accept': 'application/json'})
         token_req_json = token_req.json()
@@ -302,8 +314,15 @@ class GithubCallback(APIView):
             user.set_unusable_password()
             user.save()
 
+            token = create_jwt_pair_for_user(user)
+            serializer = UserSerializer(user)
+            follower = Follower.objects.filter(follower_id=user).values()
+            notify = Notification.objects.filter(receiver=user,is_read=False).values()
             response = {
-                "message": "회원가입 성공",
-                "user_info": user.data,
+                "message": "로그인 성공",
+                "token": token,
+                "user_info": serializer.data,
+                "follower": follower,
+                "notify": notify,
             }
             return Response(data=response, status=status.HTTP_201_CREATED)
