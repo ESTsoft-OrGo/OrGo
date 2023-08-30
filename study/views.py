@@ -1,20 +1,20 @@
 from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
-from .models import Study, Tags
+from .models import Study, Tag
 from .serializers import StudySerializer, TagSerializer
 from user.serializers import UserSerializer
 from .pagination import PaginationHandlerMixin, StudyPagination
 from django.utils import timezone
 from datetime import datetime
+from rest_framework import status
 
 # Create your views here.
-
-User = get_user_model()
+User = get_user_model
 
 class StudySearch(APIView):
     def post(self, request):
@@ -25,8 +25,9 @@ class StudySearch(APIView):
         serializer = StudySerializer(studies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
 class StudyJoin(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         study_id = request.data.get('study_id')
         study = get_object_or_404(Study, id=study_id)
@@ -45,6 +46,8 @@ class StudyJoin(APIView):
         
 
 class StudyCancel(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         study_id = request.data.get('study_id')
         study = get_object_or_404(Study, id=study_id)
@@ -82,7 +85,7 @@ class StudyList(APIView, PaginationHandlerMixin):
                 study_serializer = StudySerializer(study).data
                 leader = User.objects.get(id=study.leader.id)
                 profile = UserSerializer(leader).data
-                tags = Tags.objects.filter(study=study.id).values()
+                tags = Tag.objects.filter(study=study.id).values()
                 study_info = {
                     "study": study_serializer,
                     "leader": profile,
@@ -180,7 +183,7 @@ class StudyDelete(APIView):
 class StudyView(APIView):
     def post(self, request):
         raw_study = Study.objects.get(id=request.data['study_id'])
-        tags = Tags.objects.filter(study=raw_study).values()
+        tags = Tag.objects.filter(study=raw_study).values()
         leader = UserSerializer(raw_study.leader)
         study = StudySerializer(raw_study)
         
@@ -200,7 +203,7 @@ class Tagadd(APIView):
         study_id = Study.objects.get(id=request.data['study_id'])
         # 태그가 빈 값이여도 공백으로 DB에 저장되서 if else로 나눔.
         if request.data['name']:
-            tags = Tags.objects.create(study=study_id, name =request.data['name'])
+            tags = Tag.objects.create(study=study_id, name =request.data['name'])
             data = {
                 "message": "태그 추가 완료",
             }
@@ -215,7 +218,7 @@ class TagEdit(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        tag = Tags.objects.get(id=request.data['tag_id'])
+        tag = Tag.objects.get(id=request.data['tag_id'])
         tag.name = request.data['name']
         tag.save()
         
@@ -230,7 +233,7 @@ class TagDelete(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        tag = Tags.objects.get(id=request.data['tag_id'])
+        tag = Tag.objects.get(id=request.data['tag_id'])
         tag.delete()
         
         data = {

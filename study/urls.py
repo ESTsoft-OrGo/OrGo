@@ -1,6 +1,5 @@
 from django.urls import path
-from .views import StudyList, StudyCreate, StudyEdit, StudyDelete, StudyView, TagEdit, TagDelete, StudySearch, StudyJoin, StudyCancel, Tagadd
-# StudyCancel, StudyJoin
+from .views import StudyList, StudyCreate, StudyEdit, StudyDelete, StudyView, TagWrite, TagEdit, TagDelete, StudySearch, StudyJoin, StudyCancel , Tagadd
 
 app_name = 'study'
 

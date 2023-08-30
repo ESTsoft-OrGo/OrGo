@@ -23,14 +23,14 @@ class Migration(migrations.Migration):
                 ('online_offline', models.CharField(choices=[('ON', 'online'), ('OFF', 'offline')], max_length=5)),
                 ('location', models.CharField(max_length=100)),
                 ('max_participants', models.IntegerField(default=0)),
-                ('status', models.CharField(choices=[('종료', '종료'), ('모집중', '모집중'), ('진행중', '진행중')], max_length=5)),
+                ('status', models.CharField(choices=[('END', 'End'), ('RECRUITING', 'Recruiting'), ('ONGOING', 'Ongoing')], max_length=10)),
                 ('is_active', models.BooleanField(default=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Tags',
+            name='Tag',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=30)),
