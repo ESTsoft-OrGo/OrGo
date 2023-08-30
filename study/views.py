@@ -4,12 +4,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from django.http import Http404
 from django.contrib.auth import get_user_model
 from .models import Study, Tags
 from .serializers import StudySerializer, TagSerializer
 from user.serializers import UserSerializer
 from .pagination import PaginationHandlerMixin, StudyPagination
+from django.utils import timezone
+from datetime import datetime
+
 # Create your views here.
 
 User = get_user_model()
@@ -62,26 +64,41 @@ class StudyList(APIView, PaginationHandlerMixin):
     pagination_class = StudyPagination
     serializer_class = StudySerializer
     def get(self, request, format=None, *args, **kwargs):
-        studies = Study.objects.all().values()
-        new_studies = []
-        for study in studies:
-            study_serializer = StudySerializer(study).data
-            leader = User.objects.get(id=study.leader.id)
-            profile = UserSerializer(leader).data
-            tags = Tags.objects.filter(study=study.id).values()
-            study_info = {
-                "study": study_serializer,
-                "leader": profile,
-                "tags": tags
-            }
-            new_studies.append(study_info)
-
-        page = self.paginate_queryset(new_studies)
+        studies = Study.objects.filter(is_active=True)
+        page = self.paginate_queryset(studies)
+        # page = self.paginate_queryset(new_studies)
         if page is not None:
-            response_data = self.get_paginated_response(page)
+            # response_data = self.get_paginated_response(page)
+            new_studies = []
+            for study in page:
+                
+                today = timezone.localtime().strftime("%Y-%m-%d")
+                date_obj = datetime.strptime(today, "%Y-%m-%d").date()
+                
+                if study.end_date < date_obj:      
+                    study.status = '종료'
+                    study.save()
+                
+                study_serializer = StudySerializer(study).data
+                leader = User.objects.get(id=study.leader.id)
+                profile = UserSerializer(leader).data
+                tags = Tags.objects.filter(study=study.id).values()
+                study_info = {
+                    "study": study_serializer,
+                    "leader": profile,
+                    "tags": tags
+                }
+            new_studies.append(study_info)
+            
+            data = {
+                'studies': new_studies
+            }
+            return Response(data, status=status.HTTP_200_OK)
         else:
-            response_data = self.serializer_class(new_studies, many=True).data
-        return response_data
+            data = {
+                'detail': '페이지가 존재하지 않습니다.'
+            }
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
 
 class StudyCreate(APIView):
