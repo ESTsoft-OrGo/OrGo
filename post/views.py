@@ -115,7 +115,6 @@ class Like(APIView):
 class List(APIView):
     def get(self, request):
         posts = Post.objects.filter(is_active=True).order_by('-created_at')
-        recent_posts = posts[:5]
         
         data = []
         for post in posts:
