@@ -81,7 +81,7 @@ class Join(APIView):
 
 
 class Login(APIView):
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
 
     def post(self, request):
         email = request.data.get("email")

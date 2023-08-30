@@ -113,11 +113,13 @@ class Like(APIView):
 
 ## Post
 class List(APIView):
-    def get(self, request):
+    
+    def post(self, request):
         posts = Post.objects.filter(is_active=True).order_by('-created_at')
         
         data = []
         for post in posts:
+            print('h')
             writer = post.writer
             profile = UserSerializer(writer)
             likes = Like_Model.objects.filter(post_id=post.id).count()
