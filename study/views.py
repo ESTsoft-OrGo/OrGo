@@ -18,7 +18,7 @@ from rest_framework import status
 # User = get_user_model
 
 class StudyJoin(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request):
         study_id = request.data.get('study_id')
@@ -101,35 +101,37 @@ class StudyList(APIView, PaginationHandlerMixin):
 
 
 class StudyCreate(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        user = request.user
+        # user = request.user
+        user = User.objects.get(email='test@gmail.com')
         request_data = request.data.copy()
         request_data['leader'] = user.id
         request_data['is_active'] = True
         serializer = StudySerializer(data=request_data)
+        if not serializer.is_valid():
+            errors = serializer.errors
+            return Response({'errors':errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+        study = serializer.save()
+        
         # tag django에서 split으로 ,로 분할 해줌. 
         tags = request.data.get('tags').split(',')
-        if serializer.is_valid():
-            study = serializer.save()
-            for tag in tags:
-                tag_data = {
-                    'study': study.id,
-                    'name' : tag
-                }
-                tag_serializer = TagSerializer(data=tag_data)
-                if tag_serializer.is_valid():
-                    tag_serializer.save()
+        tag_data = [{'study':study.id, 'name':tag} for tag in tags]
+        tag_serializer = TagSerializer(data =tag_data, many=True)
+        
+        if not tag_serializer.is_valid():
+            errors = tag_serializer.errors
+            return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
 
-            data = {
-                "message" : "스터디 등록이 완료되었습니다."
-            }
+        tag_serializer.save()
             
-            return Response(data, status=status.HTTP_201_CREATED)
-        errors = serializer.errors
-        return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
-
+        data = {
+            "message" : "스터디 등록이 완료되었습니다."
+        }
+        
+        return Response(data, status=status.HTTP_201_CREATED)
 
 class StudyEdit(APIView):
     permission_classes = [IsAuthenticated]
@@ -183,10 +185,13 @@ class StudyView(APIView):
         leader = UserSerializer(raw_study.leader)
         study = StudySerializer(raw_study)
         
+        participants = UserSerializer(raw_study.participants.all(), many=True)
+        
         data = {
             "study": study.data,
             "tags": tags,
-            "leader": leader.data
+            "leader": leader.data,
+            "participants": participants.data
         }
         return Response(data, status=status.HTTP_200_OK)
 
