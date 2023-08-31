@@ -13,7 +13,7 @@ from notify.models import Notification
 from .serializers import UserSerializer, ProfileSerializer
 from post.models import Post , Like
 from .tokens import create_jwt_pair_for_user
-
+from post.uploads import S3ImgUploader
 
 BASE_URL = 'http://127.0.0.1:8000/user/login/'
 # GOOGLE_CALLBACK_URI = BASE_URL + 'google/callback/'
@@ -164,6 +164,20 @@ class ProfileSave(APIView):
         
         if serializer.is_valid():
             serializer.save()
+            
+            try:
+                image = request.FILES['profileImage']
+            except:
+                is_image = False
+            else:
+                is_image = True
+                
+            if is_image:
+                img_uploader = S3ImgUploader(image)
+                uploaded_url = img_uploader.upload()
+                user_profile.profileImage = uploaded_url
+                user_profile.save()
+            
             user_serializer = UserSerializer(request.user)
             return Response(user_serializer.data, status=status.HTTP_200_OK)
         

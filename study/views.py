@@ -1,20 +1,21 @@
 from django.db.models import Q
-from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
+from user.models import User
 from .models import Study, Tag
 from .serializers import StudySerializer, TagSerializer
 from user.serializers import UserSerializer
 from .pagination import PaginationHandlerMixin, StudyPagination
 from django.utils import timezone
-from datetime import datetime
+import datetime
+import pytz
 from rest_framework import status
 
 # Create your views here.
-User = get_user_model
+# User = get_user_model
 
 class StudySearch(APIView):
     def post(self, request):
@@ -24,6 +25,7 @@ class StudySearch(APIView):
         )
         serializer = StudySerializer(studies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class StudyJoin(APIView):
     permission_classes = [IsAuthenticated]
@@ -43,7 +45,7 @@ class StudyJoin(APIView):
                 return Response({"message": "이미 참가한 스터디입니다."}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"message": "참가 인원이 마감되었습니다."}, status=status.HTTP_400_BAD_REQUEST)
-        
+
 
 class StudyCancel(APIView):
     permission_classes = [IsAuthenticated]
@@ -66,19 +68,22 @@ class StudyCancel(APIView):
 class StudyList(APIView, PaginationHandlerMixin):
     pagination_class = StudyPagination
     serializer_class = StudySerializer
+    
     def get(self, request, format=None, *args, **kwargs):
-        studies = Study.objects.filter(is_active=True)
+        studies = Study.objects.filter(is_active=True).order_by('-created_at')
+        studies_count = Study.objects.filter(is_active=True).order_by('-created_at').count()
+        
         page = self.paginate_queryset(studies)
-        # page = self.paginate_queryset(new_studies)
         if page is not None:
-            # response_data = self.get_paginated_response(page)
             new_studies = []
             for study in page:
                 
-                today = timezone.localtime().strftime("%Y-%m-%d")
-                date_obj = datetime.strptime(today, "%Y-%m-%d").date()
+                current_time = timezone.localtime().strftime("%Y-%m-%d")
+                save_time = study.end_date.strftime("%Y-%m-%d")
+                current_date = datetime.datetime.strptime(current_time, "%Y-%m-%d")
+                save_date = datetime.datetime.strptime(save_time, "%Y-%m-%d")
                 
-                if study.end_date < date_obj:      
+                if save_date < current_date:      
                     study.status = '종료'
                     study.save()
                 
@@ -91,10 +96,11 @@ class StudyList(APIView, PaginationHandlerMixin):
                     "leader": profile,
                     "tags": tags
                 }
-            new_studies.append(study_info)
+                new_studies.append(study_info)
             
             data = {
-                'studies': new_studies
+                'studies': new_studies,
+                'studies_all': studies_count
             }
             return Response(data, status=status.HTTP_200_OK)
         else:

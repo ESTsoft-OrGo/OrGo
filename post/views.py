@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
-
+from .uploads import S3ImgUploader
 
 User = get_user_model()
 # Create your views here.
@@ -119,7 +119,6 @@ class List(APIView):
         
         data = []
         for post in posts:
-            print('h')
             writer = post.writer
             profile = UserSerializer(writer)
             likes = Like_Model.objects.filter(post_id=post.id).count()
@@ -150,7 +149,6 @@ class List(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
-
 class RecentPost(APIView):
     def get(self, request):
         recent_posts = Post.objects.filter(is_active=True).order_by('-created_at')[:5]
@@ -176,7 +174,9 @@ class Write(APIView):
         post = Post.objects.create(**post_data)
 
         for image in images:
-            PostImage.objects.create(post=post, image=image)
+            img_uploader = S3ImgUploader(image)
+            uploaded_url = img_uploader.upload()
+            PostImage.objects.create(post=post, image=uploaded_url)
 
         data = {
             "message": "글 생성 완료"
