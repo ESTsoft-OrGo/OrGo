@@ -139,7 +139,7 @@ class List(APIView):
 
 
 class RecentPost(APIView):
-    def get(self, request):
+    def post(self, request):
         recent_posts = Post.objects.filter(is_active=True).order_by('-created_at')[:5]
 
         response_data = {
