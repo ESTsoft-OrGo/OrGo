@@ -7,7 +7,7 @@ from .models import User, Profile
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.CharField(max_length=80)
     password = serializers.CharField(min_length=8, write_only=True)
-    profileImage = serializers.ImageField(source='profile.profileImage', read_only=True)
+    profileImage = serializers.FileField(source='profile.profileImage', read_only=True)
     nickname = serializers.CharField(source='profile.nickname', read_only=True)
     about = serializers.CharField(source='profile.about', read_only=True)
     id = serializers.CharField(source='profile.user.id', read_only=True)
@@ -40,4 +40,4 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        exclude = ['user']
+        fields = ['nickname', 'about']

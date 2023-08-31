@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Post, Like, Comment, PostImage
+from .models import Post, Like, Comment, PostImage
 
 #좋아요 기능 확인용
 class ImageInline(admin.TabularInline):
@@ -14,6 +14,8 @@ class PostAdmin(admin.ModelAdmin):
     def liked_by_count(self, obj):
         return obj.likes.count()
     liked_by_count.short_description = 'Liked By Count'
+    
 admin.site.register(Post, PostAdmin)
 admin.site.register(Comment)
+admin.site.register(PostImage)
 admin.site.register(Like)

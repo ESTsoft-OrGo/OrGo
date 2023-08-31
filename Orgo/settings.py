@@ -15,11 +15,12 @@ from dotenv import load_dotenv
 from datetime import timedelta
 import os
 
+load_dotenv()
+
 # Auth user
 AUTH_USER_MODEL = 'user.User'
 
 #.env 불러오기
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'channels',
+    'storages',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
@@ -58,6 +60,8 @@ INSTALLED_APPS = [
     'chat',
     'notify'
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -75,10 +79,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-}
-
-REST_AUTH = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE' : 12,
 }
 
 SIMPLE_JWT = {
@@ -117,6 +119,8 @@ ASGI_APPLICATION = 'Orgo.asgi.application'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+
+
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -144,9 +148,10 @@ DATABASES = {
         "PASSWORD": os.environ.get("DB_PASSWORD"),
         "HOST": os.environ.get("DB_HOST"),
         "PORT": os.environ.get("DB_PORT"),
-        "SSLMode": "require"
+        # "SSLMode": "require"
     }
 }
+
 '''
 DATABASES = {
     'default': {
@@ -192,8 +197,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'path/to/store/my/files/')
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
