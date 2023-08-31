@@ -133,24 +133,26 @@ class MyPage(APIView):
             }
             posts.append(post_info)
         
-        followers = Follower.objects.filter(target_id=request.user).values()
-        followings = Follower.objects.filter(follower_id=request.user).values()
+        followers = Follower.objects.filter(target_id=request.user)
+        followings = Follower.objects.filter(follower_id=request.user)
         
         new_followers = []
         new_followings = []
         
         for follower in followers:
-            follower_pf = Profile.objects.filter(user=follower['follower_id_id']).values()
+            follower_pf = UserSerializer(follower.follower_id).data
             new_followers.append(follower_pf)
             
         for following in followings:
-            following_pf = Profile.objects.filter(user=following['target_id_id']).values()
+            following_pf = UserSerializer(following.target_id).data
             new_followings.append(following_pf)
         
-        response = {"serializer": serializer.data,
+        response = {
+            "serializer": serializer.data,
             "my_posts": posts,
             "follower": new_followers,
-            "following": new_followings}
+            "following": new_followings
+        }
 
         return Response(data=response, status=status.HTTP_200_OK)
 
