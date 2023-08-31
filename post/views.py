@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from .models import Post, Like as Like_Model, Comment, PostImage 
 from user.models import Profile
-from .serializers import PostSerializer
+from .serializers import PostSerializer , CommentSerializer
 from user.serializers import ProfileSerializer , UserSerializer
 from rest_framework.views import APIView
 from django.db.models import Q
@@ -231,7 +231,7 @@ class View(APIView):
         raw_post.views = raw_post.views + 1
         raw_post.save()
         
-        comments = Comment.objects.filter(post=raw_post).values()
+        comments = Comment.objects.filter(post=raw_post)
         likes = Like_Model.objects.filter(post=raw_post).values()
         writer = User.objects.get(id=raw_post.writer_id)
         images = raw_post.image.all()  
@@ -240,14 +240,13 @@ class View(APIView):
         
         for comment in comments:
             comments_info = {} 
-            comment_writer = Profile.objects.filter(user=comment['writer_id']).values()
-            comments_info['comment'] = comment
-            comments_info['writer'] = comment_writer[0]
+            comments_info['comment'] = CommentSerializer(comment).data
+            comments_info['writer'] = UserSerializer(comment.writer).data
             comments_infos.append(comments_info)
         
         post_data = PostSerializer(raw_post).data
         post_data["images"] = [{"image": image.image.url} for image in images]
-        post_data["likes"] = len(likes)
+        post_data["likes"] = likes.count()
         
         writer_data = UserSerializer(writer).data if writer else None
         
