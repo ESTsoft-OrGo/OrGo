@@ -17,16 +17,6 @@ from rest_framework import status
 # Create your views here.
 # User = get_user_model
 
-class StudySearch(APIView):
-    def post(self, request):
-        keyword = request.data.get('q', '')
-        studies = Study.objects.filter(
-            Q(title__icontains=keyword) | Q(description__icontains=keyword)
-        )
-        serializer = StudySerializer(studies, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 class StudyJoin(APIView):
     permission_classes = [IsAuthenticated]
 

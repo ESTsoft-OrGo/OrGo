@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
+
+from study.models import Study
+from study.serializers import StudySerializer
 from .models import Post, Like as Like_Model, Comment, PostImage 
 from user.models import Profile
 from .serializers import PostSerializer
@@ -284,7 +287,10 @@ class PostSearch(APIView):
         
         posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query),is_active=True).order_by('-created_at')
         post_serializers = PostSerializer(posts, many=True).data
-
+        
+        studies = Study.objects.filter(Q(title__icontains=query) | Q(description__icontains=query))
+        study_serializer = StudySerializer(studies, many=True)
+        
         new_postlist = []
         for p_s in post_serializers:
             writer = Profile.objects.get(user=p_s['writer'])
@@ -298,7 +304,8 @@ class PostSearch(APIView):
         
         response_data = {
             "profiles": profile_serializer.data,
-            "posts": new_postlist
+            "posts": new_postlist,
+            "studies": study_serializer.data
         }
         
         return Response(response_data)
