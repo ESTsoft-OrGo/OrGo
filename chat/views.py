@@ -91,14 +91,15 @@ class RoomDelete(APIView):
         }
         return Response(datas, status=status.HTTP_200_OK)
 
+
 class Following(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self,request):
-        followings = Follower.objects.filter(follower_id=request.user).values()
+        followings = Follower.objects.filter(follower_id=request.user)
         newFollowings = []
         for following in followings:
-            following_pf = Profile.objects.filter(user=following['target_id_id']).values()
+            following_pf = UserSerializer(following.target_id).data
             newFollowings.append(following_pf)
         
         response = {"following": newFollowings}

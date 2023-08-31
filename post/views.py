@@ -9,7 +9,7 @@ from study.models import Study
 from study.serializers import StudySerializer
 from .models import Post, Like as Like_Model, Comment, PostImage 
 from user.models import Profile
-from .serializers import PostSerializer
+from .serializers import PostSerializer , CommentSerializer
 from user.serializers import ProfileSerializer , UserSerializer
 from rest_framework.views import APIView
 from django.db.models import Q
@@ -27,28 +27,12 @@ class CommentWrite(APIView):
     def post(self, request):
         user = request.user
         post = Post.objects.get(id=request.data['post_id'])
-        
         comment = Comment.objects.create(writer=user,content=request.data['content'],post=post,parent_comment=None)
         
         datas = {
             "message": "댓글 생성 완료",
         }
         return Response(datas,status=status.HTTP_201_CREATED)
-
-
-class CommentEdit(APIView):
-    permission_classes = [IsAuthenticated]
-    
-    def post(self, request):
-        comment = Comment.objects.get(id=request.data['comment_id'])
-        comment.content = request.data['comment']
-        comment.save()
-        
-        datas = {
-            "message": "댓글 수정 완료",
-        }
-        
-        return Response(datas,status=status.HTTP_200_OK)
 
 
 class CommentDelete(APIView):
@@ -63,22 +47,27 @@ class CommentDelete(APIView):
             "message": "댓글 삭제 완료",
         }
         return Response(datas,status=status.HTTP_200_OK)
-    
+
 
 class ReCommentWrite(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
         user = request.user
-        post = Post.objects.get(id=request.data['post_id'])
-        parent_comment = Comment.objects.get(id=request.data['comment_id'])
-        
-        comment = Comment.objects.create(writer=user,content=request.data['content'],post=post,parent_comment=parent_comment)
-        
-        datas = {
-            "message": "대댓글 생성 완료",
-        }
-        return Response(datas,status=status.HTTP_201_CREATED)
+        try:
+            post = Post.objects.get(id=request.data['post_id'])
+        except:
+            datas = {
+                "message": "해당 게시물을 찾을 수 없습니다.",
+            }
+            return Response(datas,status=status.HTTP_400_BAD_REQUEST)
+        else:
+            parent_comment = Comment.objects.get(id=request.data['comment_id'])
+            comment = Comment.objects.create(writer=user,content=request.data['content'],post=post,parent_comment=parent_comment)
+            datas = {
+                "message": "대댓글 생성 완료",
+            }
+            return Response(datas,status=status.HTTP_201_CREATED)
 
 
 class Unlike(APIView):
@@ -153,7 +142,7 @@ class List(APIView):
 
 
 class RecentPost(APIView):
-    def get(self, request):
+    def post(self, request):
         recent_posts = Post.objects.filter(is_active=True).order_by('-created_at')[:5]
 
         response_data = {
@@ -239,33 +228,32 @@ class Delete(APIView):
 class View(APIView):
     # 좋아요, 글 정보, 댓글과 대댓글 구분
     def post(self, request, pk):
-        post = get_object_or_404(Post, id=pk, is_active=True)
-
-        post.views += 1
-        post.save()
-
-        comments = Comment.objects.filter(post=post)
-        likes = Like_Model.objects.filter(post=post)
-        images = post.image.all()
-        writer = post.writer
-
-        comments_infos = [
-            {
-                "comment": comment,
-                "writer": ProfileSerializer(comment.writer.profile).data
-            }
-            for comment in comments
-        ]
-
-        post_data = {
-            "post": PostSerializer(post).data,
-            "images": [{"image": image.image.url} for image in images],
-            "likes": likes.count(),
-            "writer": UserSerializer(writer).data if writer else None,
+        raw_post = Post.objects.get(id=pk)
+        raw_post.views = raw_post.views + 1
+        raw_post.save()
+        
+        comments = Comment.objects.filter(post=raw_post)
+        likes = Like_Model.objects.filter(post=raw_post).values()
+        images = raw_post.image.all()  
+        
+        comments_infos = []
+        
+        for comment in comments:
+            comments_info = {} 
+            comments_info['comment'] = CommentSerializer(comment).data
+            comments_info['writer'] = UserSerializer(comment.writer).data
+            comments_infos.append(comments_info)
+        
+        post_data = PostSerializer(raw_post).data
+        post_data["images"] = [{"image": image.image.url} for image in images]
+        post_data["likes"] = likes.count()
+        
+        data = {
+            "post": post_data,
             "comments": comments_infos,
         }
 
-        return Response(post_data, status=status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)
 
 
 
