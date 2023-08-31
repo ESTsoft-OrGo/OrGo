@@ -2,7 +2,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from django.db.models import Q
 from .models import Notification
 from .serializers import NotificationSerializer
 from django.contrib.auth import get_user_model
@@ -11,7 +10,6 @@ from user.serializers import UserSerializer
 User = get_user_model()
 
 
-# Create your views here.
 class NotifyList(APIView):
     permission_classes = [IsAuthenticated]
     

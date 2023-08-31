@@ -20,8 +20,6 @@ load_dotenv()
 # Auth user
 AUTH_USER_MODEL = 'user.User'
 
-#.env 불러오기
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -113,13 +111,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Orgo.wsgi.application'
 ASGI_APPLICATION = 'Orgo.asgi.application'
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://127.0.0.1:5500",
-# ]
-
 CORS_ORIGIN_ALLOW_ALL = True
-
-
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
@@ -151,15 +143,6 @@ DATABASES = {
         # "SSLMode": "require"
     }
 }
-
-'''
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-'''
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -196,11 +179,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
-# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'path/to/store/my/files/')
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

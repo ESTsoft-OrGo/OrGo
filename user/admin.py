@@ -17,8 +17,8 @@ class UserAdmin(admin.ModelAdmin):
             posts.append(post.title)
         return posts
     liked_post.short_description = 'Liked Post'
-    
-# Register your models here.
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile)
 admin.site.register(Follower)

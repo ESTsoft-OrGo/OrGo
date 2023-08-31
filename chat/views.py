@@ -6,12 +6,11 @@ from django.db.models import Q
 from .models import Room, Message
 from django.contrib.auth import get_user_model
 from user.serializers import UserSerializer
-from user.models import Profile, Follower
+from user.models import Follower
 
 User = get_user_model()
 
 
-# Create your views here.
 class RoomList(APIView):
     permission_classes = [IsAuthenticated]
     
@@ -46,7 +45,7 @@ class RoomList(APIView):
             "rooms": room_list
         }
         return Response(datas, status=status.HTTP_200_OK)
-    
+
 
 class RoomJoin(APIView):
     permission_classes = [IsAuthenticated]
@@ -54,9 +53,8 @@ class RoomJoin(APIView):
     def post(self, request):
         user = request.user
         target = User.objects.get(pk=request.data['target'])
-    
         rooms = Room.objects.filter(Q(firstuser=user,seconduser=target)| Q(firstuser=target,seconduser=user),is_active=True)
-
+        
         if not rooms:
             room = Room.objects.create(firstuser=user,seconduser=target)
             room.title = f'room{room.pk}'

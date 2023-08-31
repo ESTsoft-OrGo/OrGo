@@ -1,16 +1,14 @@
-from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-
 from study.models import Study
 from study.serializers import StudySerializer
 from .models import Post, Like as Like_Model, Comment, PostImage 
 from user.models import Profile
 from .serializers import PostSerializer , CommentSerializer
-from user.serializers import ProfileSerializer , UserSerializer
+from user.serializers import UserSerializer
 from rest_framework.views import APIView
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
@@ -103,7 +101,6 @@ class Like(APIView):
             return Response({"detail": "You've already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-## Post
 class List(APIView):
     
     def post(self, request):
@@ -200,18 +197,20 @@ class Edit(APIView):
         }
 
         return Response(data, status=status.HTTP_200_OK)
-    
+
 
 class Delete(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request, pk):
+        
         try:
             post = Post.objects.get(id=pk)
         except ObjectDoesNotExist:
             raise Http404
         
         images = post.image.all()
+        
         for image in images:
             image.image.delete()  
             image.delete()  
@@ -234,6 +233,7 @@ class View(APIView):
         
         comments = Comment.objects.filter(post=raw_post)
         likes = Like_Model.objects.filter(post=raw_post).values()
+        writer_info = UserSerializer(raw_post.writer).data
         images = raw_post.image.all()  
         
         comments_infos = []
@@ -251,10 +251,11 @@ class View(APIView):
         data = {
             "post": post_data,
             "comments": comments_infos,
+            "writer": writer_info,
+            "likes": likes
         }
 
         return Response(data, status=status.HTTP_200_OK)
-
 
 
 class PostSearch(APIView):
@@ -265,29 +266,51 @@ class PostSearch(APIView):
             return Response({"error": "Missing 'query' parameter"}, status=400)
 
         profiles = Profile.objects.filter(Q(nickname__icontains=query) | Q(about__icontains=query),is_active=True)
-        profile_serializer = ProfileSerializer(profiles, many=True)
         
+        new_profiles = []
+        
+        for pf in profiles:
+            pf_serializer = UserSerializer(pf.user).data
+            new_profiles.append(pf_serializer)
+            
         posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query),is_active=True).order_by('-created_at')
         post_serializers = PostSerializer(posts, many=True).data
         
-        studies = Study.objects.filter(Q(title__icontains=query) | Q(description__icontains=query))
-        study_serializer = StudySerializer(studies, many=True)
+        studies = Study.objects.filter(Q(title__icontains=query) | Q(description__icontains=query),is_active=True).order_by('-created_at')
+        study_serializer = StudySerializer(studies, many=True).data
         
         new_postlist = []
+        
         for p_s in post_serializers:
-            writer = Profile.objects.get(user=p_s['writer'])
-            writer_info = ProfileSerializer(writer).data
+            
+            writer = User.objects.get(id=p_s['writer'])
+            writer_info = UserSerializer(writer).data
+            
+            post_imgs = Post.objects.get(id=p_s['id'])
+            images = post_imgs.image.all()  # 이미지들 가져오기
+            p_s["images"]= [{"image": image.image.url} for image in images]
+            
             info = {
                 'post': p_s,
                 'writer': writer_info
             }
             new_postlist.append(info)
         
+        new_studies = []
+        
+        for s_s in study_serializer:
+            leader = User.objects.get(id=s_s['leader'])
+            leader_info = UserSerializer(leader).data
+            info = {
+                'study': s_s,
+                'leader': leader_info
+            }
+            new_studies.append(info)
         
         response_data = {
-            "profiles": profile_serializer.data,
+            "profiles": new_profiles,
             "posts": new_postlist,
-            "studies": study_serializer.data
+            "studies": new_studies
         }
         
         return Response(response_data)

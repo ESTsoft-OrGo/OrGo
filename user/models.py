@@ -5,8 +5,8 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils import timezone
 from notify.models import Notification
 
-class UserManager(BaseUserManager):
 
+class UserManager(BaseUserManager):
     # create_user
     def create_user(self, email, password, is_staff, is_superuser, **extra_fields):
         if not email:
@@ -48,10 +48,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     
     objects = UserManager()
-
-# 이미지 업로드 경로
-# def profileimage_upload_path(instance, filename):
-#     return f'user/{instance.user.id}/{filename}'
+    
 
 class Profile(models.Model):
     user = models.OneToOneField('User', on_delete=models.CASCADE)
@@ -75,7 +72,8 @@ class Follower(models.Model):
     follower_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower_id')
     is_active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
+
 def follow_action(sender, **kwargs):
     if kwargs['created']:
         follow = kwargs['instance']

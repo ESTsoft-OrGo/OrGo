@@ -7,6 +7,7 @@ from django.db.models.functions import TruncDay
 
 User = get_user_model()
 
+
 class ChatConsumer(AsyncWebsocketConsumer):
     
     async def connect(self):
@@ -62,12 +63,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             user = User.objects.get(pk=writer)
             room = Room.objects.get(title=self.room_name)
             message = Message.objects.create(writer=user,content=message,room=room)
-            real = await self.message_to_json(message)
+            new_message = await self.message_to_json(message)
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'chat_message',
-                    'message': real,
+                    'message': new_message,
                     'status': 'message'
                 }
             )
