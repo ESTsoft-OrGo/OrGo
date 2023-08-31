@@ -198,7 +198,6 @@ class Edit(APIView):
         prev_imgs = PostImage.objects.filter(post=post) 
         prev_imgs.delete()
         
-        # 변경: 'postImage'에서 'images'로 수정
         images_data = request.FILES.getlist('images') 
 
         for image_data in images_data:
@@ -237,41 +236,36 @@ class Delete(APIView):
 class View(APIView):
     # 좋아요, 글 정보, 댓글과 대댓글 구분
     def post(self, request, pk):
+        post = get_object_or_404(Post, id=pk, is_active=True)
 
-        raw_post = Post.objects.get(id=pk)
-        raw_post.views = raw_post.views + 1
-        raw_post.save()
-        
-        comments = Comment.objects.filter(post=raw_post).values()
-        likes = Like_Model.objects.filter(post=raw_post).values()
-        writer = User.objects.get(id=raw_post.writer_id)
-        images = raw_post.image.all()  
-        
-        comments_infos = []
-        
-        for comment in comments:
-            comments_info = {} 
-            comment_writer = Profile.objects.filter(user=comment['writer_id']).values()
-            comments_info['comment'] = comment
-            comments_info['writer'] = comment_writer[0]
-            comments_infos.append(comments_info)
-        
-        post_data = PostSerializer(raw_post).data
-        post_data["images"] = [{"image": image.image.url} for image in images]
-        post_data["likes"] = len(likes)
-        
-        writer_data = UserSerializer(writer).data if writer else None
-        
-        data = {
-            "post": post_data,
+        post.views += 1
+        post.save()
+
+        comments = Comment.objects.filter(post=post)
+        likes = Like_Model.objects.filter(post=post)
+        images = post.image.all()
+        writer = post.writer
+
+        comments_infos = [
+            {
+                "comment": comment,
+                "writer": ProfileSerializer(comment.writer.profile).data
+            }
+            for comment in comments
+        ]
+
+        post_data = {
+            "post": PostSerializer(post).data,
+            "images": [{"image": image.image.url} for image in images],
+            "likes": likes.count(),
+            "writer": UserSerializer(writer).data if writer else None,
             "comments": comments_infos,
-            "likes": likes,
-            "writer": writer_data
         }
-        
-        return Response(data, status=status.HTTP_200_OK)
 
-    
+        return Response(post_data, status=status.HTTP_200_OK)
+
+
+
 class PostSearch(APIView):
     def post(self, request):
         query = request.data.get('query') 
