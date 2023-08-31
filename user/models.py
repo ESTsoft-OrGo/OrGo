@@ -50,13 +50,13 @@ class User(AbstractUser):
     objects = UserManager()
 
 # 이미지 업로드 경로
-def profileimage_upload_path(instance, filename):
-    return f'user/{instance.user.id}/{filename}'
+# def profileimage_upload_path(instance, filename):
+#     return f'user/{instance.user.id}/{filename}'
 
 class Profile(models.Model):
     user = models.OneToOneField('User', on_delete=models.CASCADE)
     nickname = models.CharField(default='닉네임', max_length=50, null=True, blank=True)
-    profileImage = models.ImageField(upload_to=profileimage_upload_path,null=True,blank=True)
+    profileImage = models.FileField(null=True,blank=True)
     about = models.TextField(default='자신을 소개해주세요 :)',null=True, blank=True)
     is_active = models.BooleanField(default=True)
     updated_at = models.DateTimeField(auto_now=True)

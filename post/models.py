@@ -23,15 +23,16 @@ class Post(models.Model):
         db_table = 'post'
 
 
-# 이미지 업로드 경로
-def image_upload_path(instance, filename):
-    return f'post/{instance.post.id}/{filename}'
+# # 이미지 업로드 경로
+# def image_upload_path(instance, filename):
+#     return f'post/{instance.post.id}/{filename}'
 
 
 class PostImage(models.Model):
     id = models.AutoField(primary_key=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='image')
-    image = models.ImageField(upload_to=image_upload_path)
+    # image = models.ImageField(upload_to='images/')
+    image = models.FileField()
 
     def __int__(self):
         return self.id
