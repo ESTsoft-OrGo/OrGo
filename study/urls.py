@@ -1,6 +1,5 @@
 from django.urls import path
-from .views import StudyList, StudyCreate, StudyEdit, StudyDelete, StudyView, TagEdit, TagDelete, StudySearch, StudyJoin, StudyCancel
-# StudyCancel, StudyJoin
+from .views import StudyList, StudyCreate, StudyEdit, StudyDelete, StudyView, TagEdit, TagDelete, StudySearch, StudyJoin, StudyCancel , Tagadd
 
 app_name = 'study'
 
@@ -16,6 +15,7 @@ urlpatterns = [
     path("delete/", StudyDelete.as_view(), name='delete'),
     path("detail/", StudyView.as_view(), name='detail'),
     # path("tag/write/", TagWrite.as_view(), name='tag_write'),
+    path("tag/add/", Tagadd.as_view(), name='tag_add'),
     path("tag/edit/", TagEdit.as_view(), name='tag_edit'),
     path("tag/delete/", TagDelete.as_view(), name='tag_delete'),
 ]

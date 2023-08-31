@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Study, Tags
+from .models import Study, Tag
 
 class StudySerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,5 +9,5 @@ class StudySerializer(serializers.ModelSerializer):
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Tags
+        model = Tag
         fields = '__all__'
