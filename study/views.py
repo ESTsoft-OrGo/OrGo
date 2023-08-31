@@ -123,6 +123,7 @@ class StudyCreate(APIView):
         tags = request.data.get('tags').split(',')
         if serializer.is_valid():
             study = serializer.save()
+            study.participants.add(user)
             for tag in tags:
                 tag_data = {
                     'study': study.id,
@@ -193,10 +194,13 @@ class StudyView(APIView):
         leader = UserSerializer(raw_study.leader)
         study = StudySerializer(raw_study)
         
+        participants = UserSerializer(raw_study.participants.all(), many=True)
+        
         data = {
             "study": study.data,
             "tags": tags,
-            "leader": leader.data
+            "leader": leader.data,
+            "participants": participants.data
         }
         return Response(data, status=status.HTTP_200_OK)
 
