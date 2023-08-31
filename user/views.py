@@ -15,10 +15,8 @@ from post.models import Post , Like
 from .tokens import create_jwt_pair_for_user
 from post.uploads import S3ImgUploader
 
-BASE_URL = 'http://127.0.0.1:8000/user/login/'
-# GOOGLE_CALLBACK_URI = BASE_URL + 'google/callback/'
+
 GOOGLE_CALLBACK_URI = 'http://127.0.0.1:5500/src/view/login.html'
-# GITHUB_CALLBACK_URI = BASE_URL + 'github/callback/'
 GITHUB_CALLBACK_URI = 'http://127.0.0.1:5500/src/view/login.html'
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
 GOOGLE_SECRET_KEY = os.environ.get('GOOGLE_SECRET_KEY')
@@ -26,7 +24,7 @@ GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
 GITHUB_SECRET_KEY = os.environ.get('GITHUB_SECRET_KEY')
 STATE = os.environ.get('STATE')
 
-# Create your views here.
+
 class Follow(APIView):
     permission_classes = [IsAuthenticated]
     
