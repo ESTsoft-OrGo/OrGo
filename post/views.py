@@ -24,28 +24,12 @@ class CommentWrite(APIView):
     def post(self, request):
         user = request.user
         post = Post.objects.get(id=request.data['post_id'])
-        
         comment = Comment.objects.create(writer=user,content=request.data['content'],post=post,parent_comment=None)
         
         datas = {
             "message": "댓글 생성 완료",
         }
         return Response(datas,status=status.HTTP_201_CREATED)
-
-
-class CommentEdit(APIView):
-    permission_classes = [IsAuthenticated]
-    
-    def post(self, request):
-        comment = Comment.objects.get(id=request.data['comment_id'])
-        comment.content = request.data['comment']
-        comment.save()
-        
-        datas = {
-            "message": "댓글 수정 완료",
-        }
-        
-        return Response(datas,status=status.HTTP_200_OK)
 
 
 class CommentDelete(APIView):
@@ -60,22 +44,27 @@ class CommentDelete(APIView):
             "message": "댓글 삭제 완료",
         }
         return Response(datas,status=status.HTTP_200_OK)
-    
+
 
 class ReCommentWrite(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
         user = request.user
-        post = Post.objects.get(id=request.data['post_id'])
-        parent_comment = Comment.objects.get(id=request.data['comment_id'])
-        
-        comment = Comment.objects.create(writer=user,content=request.data['content'],post=post,parent_comment=parent_comment)
-        
-        datas = {
-            "message": "대댓글 생성 완료",
-        }
-        return Response(datas,status=status.HTTP_201_CREATED)
+        try:
+            post = Post.objects.get(id=request.data['post_id'])
+        except:
+            datas = {
+                "message": "해당 게시물을 찾을 수 없습니다.",
+            }
+            return Response(datas,status=status.HTTP_400_BAD_REQUEST)
+        else:
+            parent_comment = Comment.objects.get(id=request.data['comment_id'])
+            comment = Comment.objects.create(writer=user,content=request.data['content'],post=post,parent_comment=parent_comment)
+            datas = {
+                "message": "대댓글 생성 완료",
+            }
+            return Response(datas,status=status.HTTP_201_CREATED)
 
 
 class Unlike(APIView):
