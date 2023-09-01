@@ -70,6 +70,7 @@
 -   asgi : uvicorn
 -   Redis Stack == 6.2.6
 -   PostgreSQL == 15.4
+-   AWS S3
 
 #### Front-End
 
@@ -221,6 +222,26 @@
 ## 4. 전체 페이지
 
 ## 5. 기능
+### 유저 기능
+-   전체 기능
+    ![full-process](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/ae976b2a-f2f2-4593-b826-db16dab1eddf)
+-   회원가입
+    ![join](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/776231be-2552-4e76-89aa-6fe7069e81b0)
+-   로그인
+    ![login](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/d34781b2-c27d-4d4b-97c1-f87d6587683a)
+-   비밀번호 변경
+    ![change-password](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/2b7631a4-e513-40d4-b122-e2ed679b8b45)
+-   회원 탈퇴
+    ![delete](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/885a5651-c64d-4cc5-a282-3b975a6eb467)
+-   로그아웃
+    ![logout](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/9c7d293f-3484-413a-b0b0-9f1612ab06f9)
+-   소셜 로그인
+    ![social-login](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/7f951421-dabc-44dc-a5d8-6ca8426b81db)
+
+
+
+
+
 
 ## 6. 개발하며 느낀점
 
