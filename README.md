@@ -67,7 +67,7 @@
 -   Aws Lightsail
 -   Nginx
     -   wsgi : gunicorn
-    -   asgi : uvicorn
+-   asgi : uvicorn
 -   Redis Stack == 6.2.6
 -   PostgreSQL == 15.4
 
@@ -92,7 +92,11 @@
 ### 3.1 Entity Relationship Diagram
  ![Untitled](https://github.com/ESTsoft-OrGo/OrGo/assets/95666574/610374a4-d7d9-4b2d-b95a-2750f0b1f3ba)
 
-### 3.2 URL 설계
+### 3.2 API 명세서
+
+#### API 명세서: https://withorgo.notion.site/API-15bb92089e5048df8bf9a1916bba61d3?pvs=4
+
+### 3.3 URL 설계
 |이름|URL|비고|
 |------|---|---|
 |User|||
@@ -134,11 +138,69 @@
 |생성 가능한 채팅방 목록|chat/following/|팔로잉한 유저만 채팅방 생성 가능|
 |참가할 채팅방|chat/join/||
 |Notify|||
-|알림 목록|/notify/||
+|알림 목록|notify/||
 
-### 3.3 프로젝트 구조
-
-### 3.4 개발 일정
+### 3.4 프로젝트 구조
+```
+📦OrGo
+ ┣ 📂Orgo
+ ┃ ┣ 📜asgi.py
+ ┃ ┣ 📜wsgi.py
+ ┃ ┣ 📜settings.py
+ ┃ ┣ 📜urls.py
+ ┣ 📂chat
+ ┃ ┣ 📜admin.py
+ ┃ ┣ 📜apps.py
+ ┃ ┣ 📜consumers.py
+ ┃ ┣ 📜models.py
+ ┃ ┣ 📜routing.py
+ ┃ ┣ 📜tests.py
+ ┃ ┣ 📜urls.py
+ ┃ ┣ 📜view.py
+ ┣ 📂notify
+ ┃ ┣ 📜admin.py
+ ┃ ┣ 📜apps.py
+ ┃ ┣ 📜consumers.py
+ ┃ ┣ 📜models.py
+ ┃ ┣ 📜routing.py
+ ┃ ┣ 📜serializers.py
+ ┃ ┣ 📜tests.py
+ ┃ ┣ 📜urls.py
+ ┃ ┣ 📜view.py
+ ┣ 📂post
+ ┃ ┣ 📜admin.py
+ ┃ ┣ 📜apps.py
+ ┃ ┣ 📜uploads.py
+ ┃ ┣ 📜models.py
+ ┃ ┣ 📜serializers.py
+ ┃ ┣ 📜tests.py
+ ┃ ┣ 📜urls.py
+ ┃ ┣ 📜view.py
+ ┣ 📂study
+ ┃ ┣ 📜admin.py
+ ┃ ┣ 📜apps.py
+ ┃ ┣ 📜uploads.py
+ ┃ ┣ 📜models.py
+ ┃ ┣ 📜serializers.py
+ ┃ ┣ 📜pagination.py
+ ┃ ┣ 📜tests.py
+ ┃ ┣ 📜urls.py
+ ┃ ┣ 📜view.py
+ ┣ 📂user
+ ┃ ┣ 📜admin.py
+ ┃ ┣ 📜apps.py
+ ┃ ┣ 📜uploads.py
+ ┃ ┣ 📜models.py
+ ┃ ┣ 📜serializers.py
+ ┃ ┣ 📜tokens.py
+ ┃ ┣ 📜tests.py
+ ┃ ┣ 📜urls.py
+ ┃ ┣ 📜view.py
+ ┣ 📜manage.py
+ ┣ 📜README.md
+ ┗ 📜requirements.txt
+```
+### 3.5 개발 일정
 
 #### 개발 일정
 
