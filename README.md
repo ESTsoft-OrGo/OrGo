@@ -141,7 +141,25 @@
 |Notify|||
 |알림 목록|notify/||
 
-### 3.4 프로젝트 구조
+### 3.4 프로젝트 설계 및 프로세스
+
+#### Architecture
+
+![5](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/90eed4d4-f327-4fac-a26e-5f2847c1d195)
+
+#### Wsgi와 Asgi
+
+![1](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/635c5a7d-c7ec-42ee-9dee-4c3a30067fee)
+
+#### Django Channels와 Redis
+
+![2](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/8c8d2a5d-fcfb-4b43-bd78-65a1ae6f7bb4)
+
+#### Django의 시그널과 Redis
+
+![3](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/295fdb44-48e1-40d6-ac77-35121c6aacc2)
+![4](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/6caf6093-7556-450c-8403-f34a414702fe)
+
 #### 폴더 트리
 ```
 📦OrGo
@@ -287,6 +305,12 @@ Figma : https://www.figma.com/file/8jeAIfOdZcYZ8ehctmA8yn/Untitled?type=design&n
     ![re_comment](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/58efa59b-7bd1-4aec-b9ea-85d6e0912ad7)
 
 -   삭제
+    ![comment_delete](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/468145af-8e88-4626-81cc-afcee2ec3b07)
+
+### 좋아요 기능
+
+-   좋아요 / 취소
+    ![좋아요](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/ab8daad8-7435-49d2-b4b0-b36ab8221b3f)
 
 ### 팔로우 기능
 
@@ -296,10 +320,15 @@ Figma : https://www.figma.com/file/8jeAIfOdZcYZ8ehctmA8yn/Untitled?type=design&n
 ### 스터디 기능
 
 -   생성
+    ![study-create](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/82acb040-d386-463d-bea2-f0263d2e78ff)
 -   삭제
+    ![study-delete](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/be612a12-d946-48b5-a78a-621567a2a368)
 -   수정
+    ![study-update](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/28191658-3059-40f4-b39f-f8c92509cee8)
 -   목록 / 페이지네이션
+    ![study-list](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/935eb569-0983-4148-b2e4-b0d87cb5ae33)
 -   참가 / 참가 취소
+    ![study-join-quit](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/c814963f-c08b-4b0c-8cb8-ec93d7c0c48d)
 
 ### 검색 기능
 
