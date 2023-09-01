@@ -64,7 +64,7 @@
 ## 3. 프로젝트 구조와 개발 일정
 
 ### 3.1 Entity Relationship Diagram
-- ![Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/12c7afee-5692-43e5-becc-2504ad8fe7b5/Untitled.png)
+- ![Uploading Untitled.png…]()
 
 ### 3.2 URL 설계
 |이름|URL|비고|
