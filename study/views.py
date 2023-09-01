@@ -202,9 +202,11 @@ class Tagadd(APIView):
         study_id = Study.objects.get(id=request.data['study_id'])
         
         if request.data['name']:
-            tags = Tag.objects.create(study=study_id, name =request.data['name'])
+            tags = Tag.objects.create(study=study_id, name=request.data['name'])
+            tag_serializer = TagSerializer(tags).data
             data = {
                 "message": "태그 추가 완료",
+                "tag": tag_serializer
             }
         else:
             data = {
