@@ -3,6 +3,15 @@
 
 ##  팀원 소개
 
+###  안녕하세요. Team OrGo 입니다!
+
+|강현우|김이도|사수봉|이사랑|황봉수|
+|:---:|:---:|:---:|:---:|:---:|
+<img src="" width="400">|<img src="" width="400">|<img src="" width="430">|<img src="" width="400">|<img src="" width="400">|
+|<a href="https://github.com/Hyunwooz">🔗 Hyunwooz</a>|<a href="https://github.com/xkimido">🔗 xkimido</a>|<a href="https://github.com/su0797">🔗 su0797</a>|<a href="https://github.com/ra388">🔗 ra388</a>|<a href="https://github.com/bnbbbb">🔗 bnbbbb</a>|
+
+저희는 백엔드 주니어 개발자 팀 OrGo입니다.
+
 **[목차]**
 
 1. [목표와 기능](#1-목표와-기능)
