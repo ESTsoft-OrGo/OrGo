@@ -7,7 +7,7 @@
 
 |강현우|김이도|사수봉|이사랑|황봉수|
 |:---:|:---:|:---:|:---:|:---:|
-<img src="" width="400">|<img src="" width="400">|<img src="" width="430">|<img src="" width="400">|<img src="" width="400">|
+<img src="https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/722d5102-81f7-46a2-8afe-505595e57983" width="400" style="max-width: 100%;">|<img src="https://avatars.githubusercontent.com/u/96900790?v=4" width="400" style="max-width: 100%;">|<img src="https://cdn.discordapp.com/attachments/1141230189498617867/1147091272142692352/KakaoTalk_Photo_2023-09-01-17-46-40.jpeg" width="400" style="max-width: 100%;">|<img src="https://cdn.discordapp.com/attachments/1141230189498617867/1147088584428498964/IMG_0887.JPG" width="400" style="max-width: 100%;">|<img src="https://cdn.discordapp.com/attachments/1141230189498617867/1147090595614031942/image.png" width="400" style="max-width: 100%;">|
 |<a href="https://github.com/Hyunwooz">🔗 Hyunwooz</a>|<a href="https://github.com/xkimido">🔗 xkimido</a>|<a href="https://github.com/su0797">🔗 su0797</a>|<a href="https://github.com/ra388">🔗 ra388</a>|<a href="https://github.com/bnbbbb">🔗 bnbbbb</a>|
 
 저희는 백엔드 주니어 개발자 팀 OrGo입니다.
