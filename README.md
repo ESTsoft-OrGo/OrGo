@@ -222,38 +222,87 @@
 
 ## 4. 전체 페이지
 
+Figma : https://www.figma.com/file/8jeAIfOdZcYZ8ehctmA8yn/Untitled?type=design&node-id=2-54&mode=design&t=DPLaDoTa3ZSmgwT4-0
+
+![스크린샷 2023-09-01 171533](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/2845b2b3-79fd-426b-8ced-fb044e43562c)
+
 ## 5. 기능
+
 ### 유저 기능
+
 -   전체 기능
     ![full-process](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/ae976b2a-f2f2-4593-b826-db16dab1eddf)
+
 -   회원가입
     ![join](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/776231be-2552-4e76-89aa-6fe7069e81b0)
+
 -   로그인
     ![login](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/d34781b2-c27d-4d4b-97c1-f87d6587683a)
+
 -   비밀번호 변경
     ![change-password](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/2b7631a4-e513-40d4-b122-e2ed679b8b45)
+
 -   회원 탈퇴
     ![delete](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/885a5651-c64d-4cc5-a282-3b975a6eb467)
+
 -   로그아웃
     ![logout](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/9c7d293f-3484-413a-b0b0-9f1612ab06f9)
+
 -   소셜 로그인
     ![social-login](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/7f951421-dabc-44dc-a5d8-6ca8426b81db)
+
 -   프로필 변경
     ![profile-update](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/c44d5786-15da-4ae0-b855-335086027031)
+
 -   마이 페이지
     ![profile](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/04f44027-4108-4134-9e7c-7243dcd31e4b)
+
 ### 알림
+
 -   알림 기능
     ![notification](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/6ca495b2-3e21-49d0-be5d-922a01cb048c)
+
 ### 1:1 채팅
+
 -   1:1 채팅 기능
     ![direct-message](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/7fe5321c-203a-4e2f-b569-e074079df4fc)
+
 ### 게시물 기능
+
 -   생성
+    ![post_write](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/a8ad9084-fce3-4a9c-b5f3-8c606da97fca)
 -   목록
+    ![post_read](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/c7be8804-b155-433b-9168-8c3601045e9e)
 -   수정
+    ![post_edit](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/30954fc4-7526-427f-a3b9-60208a30bcb3)
 -   삭제
+    ![post_delete](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/c0c109f9-340a-489b-8fb0-67da1e49258c)
+
+### 댓글 기능
+
+-   생성
+    ![comment_write](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/12f4e12e-a507-4797-ad77-fcd20d6c6ef8)
+
+-   답글
+    ![re_comment](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/58efa59b-7bd1-4aec-b9ea-85d6e0912ad7)
+
+-   삭제
+
+### 팔로우 기능
+
+-   팔로우 / 언팔로우
+    ![follow_full](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/f724a0f8-f057-41a5-897d-d9549fac4e54)
+
+### 스터디 기능
+
+-   생성
+-   삭제
+-   수정
+-   목록 / 페이지네이션
+-   참가 / 참가 취소
+
 ### 검색 기능
+
 -   검색 기능
     ![search](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/8c1e9acf-4995-4908-b1c0-bc348bdae81e)
 
