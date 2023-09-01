@@ -184,15 +184,18 @@ class Edit(APIView):
         post.content = request.data.get('content', post.content)
         post.save()
 
-        prev_imgs = PostImage.objects.filter(post=post) 
-        prev_imgs.delete()
+        img_edit = request.data.get('img_edit')
         
-        images = request.FILES.getlist('images') 
+        if img_edit == "true":
+            prev_imgs = PostImage.objects.filter(post=post) 
+            prev_imgs.delete()
+            
+            images = request.FILES.getlist('images') 
 
-        for image in images:
-            img_uploader = S3ImgUploader(image)
-            uploaded_url = img_uploader.upload()
-            PostImage.objects.create(post=post, image=uploaded_url)
+            for image in images:
+                img_uploader = S3ImgUploader(image)
+                uploaded_url = img_uploader.upload()
+                PostImage.objects.create(post=post, image=uploaded_url)
     
 
         data = {
