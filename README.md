@@ -142,6 +142,7 @@
 |알림 목록|notify/||
 
 ### 3.4 프로젝트 구조
+#### 폴더 트리
 ```
 📦OrGo
  ┣ 📂Orgo
@@ -237,11 +238,24 @@
     ![logout](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/9c7d293f-3484-413a-b0b0-9f1612ab06f9)
 -   소셜 로그인
     ![social-login](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/7f951421-dabc-44dc-a5d8-6ca8426b81db)
-
-
-
-
-
+-   프로필 변경
+    ![profile-update](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/c44d5786-15da-4ae0-b855-335086027031)
+-   마이 페이지
+    ![profile](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/04f44027-4108-4134-9e7c-7243dcd31e4b)
+### 알림
+-   알림 기능
+    ![notification](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/6ca495b2-3e21-49d0-be5d-922a01cb048c)
+### 1:1 채팅
+-   1:1 채팅 기능
+    ![direct-message](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/7fe5321c-203a-4e2f-b569-e074079df4fc)
+### 게시물 기능
+-   생성
+-   목록
+-   수정
+-   삭제
+### 검색 기능
+-   검색 기능
+    ![search](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/8c1e9acf-4995-4908-b1c0-bc348bdae81e)
 
 ## 6. 개발하며 느낀점
 
