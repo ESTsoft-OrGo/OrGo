@@ -64,7 +64,7 @@
 ## 3. 프로젝트 구조와 개발 일정
 
 ### 3.1 Entity Relationship Diagram
-- ![Uploading Untitled.png…]()
+- ![Untitled](https://github.com/ESTsoft-OrGo/OrGo/assets/95666574/610374a4-d7d9-4b2d-b95a-2750f0b1f3ba)
 
 ### 3.2 URL 설계
 |이름|URL|비고|
