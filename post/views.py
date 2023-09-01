@@ -187,10 +187,13 @@ class Edit(APIView):
         prev_imgs = PostImage.objects.filter(post=post) 
         prev_imgs.delete()
         
-        images_data = request.FILES.getlist('images') 
+        images = request.FILES.getlist('images') 
 
-        for image_data in images_data:
-            PostImage.objects.create(post=post, image=image_data)
+        for image in images:
+            img_uploader = S3ImgUploader(image)
+            uploaded_url = img_uploader.upload()
+            PostImage.objects.create(post=post, image=uploaded_url)
+    
 
         data = {
             "message": "글 수정 완료"
