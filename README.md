@@ -2,9 +2,7 @@
 
 ![index2](https://github.com/Hyunwooz/Django_Channels_Practice/assets/107661525/4718f314-a35d-463e-b28e-9705dafec488)
 
-**오르고 바로가기**
-<a href="http://www.withorgo.site/" style="display: block;"><img src="https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/614e96c6-87df-473f-8c97-d9cdfc49bff3" width="250" style="max-width: 100%;">
-</a>
+[오르고 바로가기](http://www.withorgo.site/)
 
 ```
 해당 서비스를 이용해보실 수 있는 테스트 계정입니다.
