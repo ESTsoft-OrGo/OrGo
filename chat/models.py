@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from notify.models import Notification
+from django.db.models.signals import post_save
 
 User = get_user_model()
 
@@ -10,6 +12,14 @@ class Room(models.Model):
     firstuser = models.ForeignKey(User, on_delete=models.CASCADE ,related_name="firstuser")
     seconduser = models.ForeignKey(User, on_delete=models.CASCADE,related_name="seconduser")
     created_at = models.DateTimeField(auto_now_add=True)
+
+def room_action(sender, **kwargs):
+    if kwargs['created']:
+        room = kwargs['instance']
+        content = f'채팅방을 생성하셨습니다.'
+        noti = Notification.objects.create(sender=room.firstuser,receiver=room.seconduser,content=content)
+
+post_save.connect(room_action, sender=Room)
 
 
 class Message(models.Model):
