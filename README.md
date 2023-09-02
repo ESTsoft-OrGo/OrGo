@@ -35,7 +35,9 @@
 
 저희는 백엔드 주니어 개발자 팀 OrGo입니다.
 
-**[목차]**
+### 각자의 역할
+
+## **[목차]**
 
 1. [기능](#1-목표와-기능)
 2. [개발 환경 및 배포 URL](#2-개발-환경-및-배포-URL)
@@ -260,7 +262,7 @@
 
 Figma : https://www.figma.com/file/8jeAIfOdZcYZ8ehctmA8yn/Untitled?type=design&node-id=2-54&mode=design&t=DPLaDoTa3ZSmgwT4-0
 
-![스크린샷 2023-09-01 171533](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/2845b2b3-79fd-426b-8ced-fb044e43562c)
+![스크린샷 2023-09-02 112048](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/2d97c668-c584-4225-b7fd-9b5f76ac746a)
 
 ## 5. 기능
 
@@ -367,8 +369,19 @@ Figma : https://www.figma.com/file/8jeAIfOdZcYZ8ehctmA8yn/Untitled?type=design&n
     ![search](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/8c1e9acf-4995-4908-b1c0-bc348bdae81e)
 
 ## 6. 개발하며 느낀점
-
-### 마치며
+### 6.1. 배운 점
+#### 6.1.1 Wsgi와 Asgi
+#### 6.1.2 Django Channels
+#### 6.1.3 gunicorn과 uwsgi 그리고 Nginx
+#### 6.1.4 HTTP 프로톨과 Socket
+#### 6.1.5 동기와 비동기
+### 6.2. 느낀 점
+#### 강현우
+#### 김이도
+#### 사수봉
+#### 이사랑
+#### 황봉수
+## 마치며
 
 
 
