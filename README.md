@@ -162,8 +162,11 @@
 |Chat|||
 |참여한 목록|chat/list/||
 |생성 가능한 채팅방 목록|chat/following/|팔로잉한 유저만 채팅방 생성 가능|
-|참가할 채팅방|chat/join/||
+|채팅방 생성|chat/join/||
+|채팅방 입장|ws:/chat/str:room_name/||
+|메시지 보내기|ws:/chat/str:room_name/||
 |Notify|||
+|실시간 알림 받기|ws:/notify/str:user_id/||
 |알림 목록|notify/||
 
 ### 3.4. 프로젝트 설계 및 프로세스
