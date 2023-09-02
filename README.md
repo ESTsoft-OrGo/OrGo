@@ -39,6 +39,8 @@
 
 ### 각자의 역할
 
+![각자역할](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/c6d855ac-13fe-431b-a9c8-5e131c218474)
+
 ## **[목차]**
 
 1. [기능](#1-목표와-기능)
