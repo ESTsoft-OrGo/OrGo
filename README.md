@@ -1,5 +1,28 @@
 # OrGo
-# 이스트소프트 오르미 수강생 커뮤니티 오르고
+
+![index2](https://github.com/Hyunwooz/Django_Channels_Practice/assets/107661525/4718f314-a35d-463e-b28e-9705dafec488)
+
+```
+해당 서비스를 이용해보실 수 있는 테스트 계정입니다.
+
+ ID : test5@gmail.com
+ PW : test2023
+```
+
+## 개요
+```
+안녕하세요. 🙇‍♂️
+
+오르고는 오르미 교육생분들을 위한 커뮤니티이며 
+오르미 1기, 2기 ... N기 모두가 이용할 수 있는 서비스 입니다.
+
+백엔드 개발이라는 오름을 혼자가 아닌 "함께" 올라보세요!
+그럼 우리 같이 ORGO!
+
+1️⃣오르고는 일상에서 찾아낸 소소한 행복을 공유할 수 있습니다.
+2️⃣오르고는 혼자 공부 하는 것이 힘들 때 함께할 팀원들을 구할 수도 있습니다.
+3️⃣오르고는 팔로워분들과 1:1 메시지를 통해 소통이 가능합니다.
+```
 
 ##  팀원 소개
 
@@ -22,11 +45,6 @@
 6. [개발하며 느낀점](#6-개발하며-느낀점)
 
 ## 1. 기능
-
-### 1.1. 목표
-
-- 오르미 교육생들을 위한 커뮤니티
-- 오르미 1기 2기 … N기가 모두가 이용할 수 있는 사이트
 
 ### 1.1. 주요 기능
 
@@ -339,7 +357,7 @@ Figma : https://www.figma.com/file/8jeAIfOdZcYZ8ehctmA8yn/Untitled?type=design&n
 
 -   목록 / 페이지네이션
     ![study-list](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/935eb569-0983-4148-b2e4-b0d87cb5ae33)
-    
+
 -   참가 / 참가 취소
     ![study-join-quit](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/c814963f-c08b-4b0c-8cb8-ec93d7c0c48d)
 
