@@ -374,7 +374,39 @@ Figma : https://www.figma.com/file/8jeAIfOdZcYZ8ehctmA8yn/Untitled?type=design&n
 
 ## 6. 개발하며 느낀점
 ### 6.1. 배운 점
-#### 6.1.1 Wsgi와 Asgi
+#### 6.1.1 CGI와 WSGI, ASGI
+
+CGI란?
+
+Common Gateway Interface의 약자이며 웹 서버와 외부 프로그램을 연결해주는 표준화된 프로토콜입니다.
+
+웹에 대한 수요가 증가함에 따라서 웹 서버에서 처리할 수 없는 정보가 요청되었을 경우,
+그 처리를 외부 애플리케이션이 할 수 있도록 호출함으로써 중계 역할을 하고 있습니다.
+
+CGI는 클라이언트의 요청이 발생할 때마다 프로세스를 추가로 생성하고 삭제하게 됩니다.
+다수의 사용자가 동시에 요청할 경우 커널 리소스를 계속 생성/삭제하기 떄문에 오버헤드가 심해지고 성능 저하의 원인이 되기도 합니다.
+
+WSGI란?
+
+Web Server Gateway Interface의 약자이며 Python이 애플리케이션, 스크립트가 웹 서버와 통신하기 위한 인터페이스로 CGI를 모태로 만들어졌습니다.
+
+WSGI의 경우 CGI와는 다르게 한 프로세스에서 모든 요청을 콜백(Callback)으로 받아 처리하게 됩니다.
+
+간단히 설명하자면 웹 서버가 애플리케이션의 코드를 직접적으로 읽을 수 없으므로 중간의 미들웨어가 해당 코드를 읽어서 결과를 대신 반환해주는 역할을 한다고 보면 됩니다.
+
+대표적인 WSGI Web Application에는 gunicorn 등이 있습니다.
+
+WSGI의 경우에는 비동기적인 요청 처리에 단점이 있습니다. 하나의 동기적인 callable이 요청을 받아 응답을 리턴하는 방식이었는데, 이런 방식은 길게 유지되어야 하는 연결 - long-poll HTTP나 웹 소켓에는 적합하지 않습니다.
+
+ASGI란?
+
+Asynchronous Server Gateway Interface의 약자이며 Python에서는 asyncio, corutin과 같은 비동기 처리를 지원합니다. ASGI는 WSGI의 단점을 개선하기 위해 만들어졌습니다.
+WSGI에 대한 호환성을 가지면서 비동기적인 요청을 처리할 수 있는 인터페이스입니다.
+
+ASGI는 Websoket 프로토콜과 HTTP 2.0을 지원합니다.
+대표적인 ASGI Web Application에는 Uvicorn 등이 있습니다.
+
+
 #### 6.1.2 Django Channels
 #### 6.1.3 gunicorn과 uwsgi 그리고 Nginx
 #### 6.1.4 HTTP 프로톨과 Socket
