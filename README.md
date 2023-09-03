@@ -173,7 +173,7 @@
 
 #### 3.4.1. Architecture
 
-![스크린샷 2023-09-03 213759](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/190cabad-fe75-45c2-8503-e11d8ba822e8)
+![스크린샷 2023-09-03 225445](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/94c72520-8b0a-4f25-acb6-6e0e561a20e4)
 
 #### 3.4.2. Django Channles Request,Response
 
