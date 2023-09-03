@@ -105,12 +105,12 @@
 
 #### 2.3.1. Back-End
 
--   http://43.200.64.24/
+-   https://api.withorgo.site/
 -   Back-End Repo : https://github.com/ESTsoft-OrGo/OrGo
 
 #### 2.3.2. Front-End
 
--   http://www.withorgo.site/
+-   https://www.withorgo.site/
 -   Front-End Repo : https://github.com/ESTsoft-OrGo/Orgo-FE
 
 ## 3. 프로젝트 구조와 개발 일정
