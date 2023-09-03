@@ -173,9 +173,9 @@
 
 #### 3.4.1. Architecture
 
-![5](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/90eed4d4-f327-4fac-a26e-5f2847c1d195)
+![스크린샷 2023-09-03 213759](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/190cabad-fe75-45c2-8503-e11d8ba822e8)
 
-#### 3.4.2. Wsgi와 Asgi
+#### 3.4.2. Django Channles Request,Response
 
 ![1](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/635c5a7d-c7ec-42ee-9dee-4c3a30067fee)
 
@@ -183,10 +183,9 @@
 
 ![2](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/8c8d2a5d-fcfb-4b43-bd78-65a1ae6f7bb4)
 
-#### 3.4.4. Django의 시그널과 Redis
-
-![3](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/295fdb44-48e1-40d6-ac77-35121c6aacc2)
-![4](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/6caf6093-7556-450c-8403-f34a414702fe)
+#### 3.4.4. [실시간 알림 기능] Django Signal Process
+![스크린샷 2023-09-03 221321](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/5ef0e5e7-3530-4162-956b-71aec0274b2e)
+![스크린샷 2023-09-03 221330](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/9384c0a2-7f35-448e-b958-dc41cc1a40a4)
 
 #### 3.4.5. 폴더 트리
 ```
