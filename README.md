@@ -121,6 +121,7 @@
 ### 3.2. API 명세서
 
 #### 3.2.1. API 명세서: https://withorgo.notion.site/API-15bb92089e5048df8bf9a1916bba61d3?pvs=4
+[API명세서][https://github.com/ESTsoft-OrGo/OrGo.wiki.git]
 
 ### 3.3. URL 설계
 |이름|URL|비고|
