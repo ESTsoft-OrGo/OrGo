@@ -254,6 +254,8 @@
 -   2023.08.17 ~ 2023.09.01
 -   프로젝트 개발 일정: https://withorgo.notion.site/d52779f12ac547dabc1240320ef4aeb2?v=fb0701095b3840218a980c13305cda34&pvs=4
 
+![스크린샷 2023-09-04 175059](https://github.com/Hyunwooz/DjangoGptProject_BE/assets/107661525/cbe30798-aef7-4d7d-ac6a-5eda5d91b0c1)
+
 ![스크린샷 2023-09-01 141622](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/f9bae29d-0fbe-4e28-b771-2ef2dfe5c803)
 
 #### 3.5.2. 기술 스택
@@ -413,9 +415,7 @@ WSGI에 대한 호환성을 가지면서 비동기적인 요청을 처리할 수
 ASGI는 Websoket 프로토콜과 HTTP 2.0을 지원합니다.
 대표적인 ASGI Web Application에는 Uvicorn 등이 있습니다.
 
-
-#### 6.1.2 Django Channels
-#### 6.1.3 우리가 배포에 Nginx와 Gunicorn,Uvicorn을 사용한 이유
+#### 6.1.2 우리가 배포에 Nginx와 Gunicorn,Uvicorn을 사용한 이유
 
 ##### Runserver를 이용해 서버 배포를 안하는 이유
 
