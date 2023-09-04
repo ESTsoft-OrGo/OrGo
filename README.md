@@ -92,7 +92,7 @@
 -   Aws Lightsail
 -   Nginx
     -   wsgi : gunicorn
--   asgi : uvicorn
+    -   asgi : uvicorn
 -   Redis Stack == 6.2.6
 -   PostgreSQL == 15.4
 -   AWS S3
@@ -383,7 +383,7 @@ Figma : https://www.figma.com/file/8jeAIfOdZcYZ8ehctmA8yn/Untitled?type=design&n
 ### 6.1. 배운 점
 #### 6.1.1 CGI와 WSGI, ASGI
 
-CGI란?
+##### CGI란?
 
 Common Gateway Interface의 약자이며 웹 서버와 외부 프로그램을 연결해주는 표준화된 프로토콜입니다.
 
@@ -393,7 +393,7 @@ Common Gateway Interface의 약자이며 웹 서버와 외부 프로그램을 �
 CGI는 클라이언트의 요청이 발생할 때마다 프로세스를 추가로 생성하고 삭제하게 됩니다.
 다수의 사용자가 동시에 요청할 경우 커널 리소스를 계속 생성/삭제하기 떄문에 오버헤드가 심해지고 성능 저하의 원인이 되기도 합니다.
 
-WSGI란?
+##### WSGI란?
 
 Web Server Gateway Interface의 약자이며 Python이 애플리케이션, 스크립트가 웹 서버와 통신하기 위한 인터페이스로 CGI를 모태로 만들어졌습니다.
 
@@ -405,7 +405,7 @@ WSGI의 경우 CGI와는 다르게 한 프로세스에서 모든 요청을 콜�
 
 WSGI의 경우에는 비동기적인 요청 처리에 단점이 있습니다. 하나의 동기적인 callable이 요청을 받아 응답을 리턴하는 방식이었는데, 이런 방식은 길게 유지되어야 하는 연결 - long-poll HTTP나 웹 소켓에는 적합하지 않습니다.
 
-ASGI란?
+##### ASGI란?
 
 Asynchronous Server Gateway Interface의 약자이며 Python에서는 asyncio, corutin과 같은 비동기 처리를 지원합니다. ASGI는 WSGI의 단점을 개선하기 위해 만들어졌습니다.
 WSGI에 대한 호환성을 가지면서 비동기적인 요청을 처리할 수 있는 인터페이스입니다.
@@ -417,7 +417,7 @@ ASGI는 Websoket 프로토콜과 HTTP 2.0을 지원합니다.
 #### 6.1.2 Django Channels
 #### 6.1.3 우리가 배포에 Nginx와 Gunicorn,Uvicorn을 사용한 이유
 
-Runserver를 이용해 서버 배포를 안하는 이유:
+##### Runserver를 이용해 서버 배포를 안하는 이유
 
 https://docs.djangoproject.com/en/3.2/ref/django-admin/#runserver # Django Docs
 
@@ -428,7 +428,7 @@ Runserver는 개발 단계에서 웹 애플리케이션을 빠르게 개발하�
 
 따라서 보안적, 성능적으로 효율적이지 못하기에 보통 Nginx와 Gunicorn을 같이 사용하여 배포하게 됩니다.
 
-Nginx
+##### Nginx
 
 동시 접속 처리에 특화된 웹서버로 클라이언트로 부터 HTTP 요청을 받아 해당하는 파일을
 HTTP 통신을 통해 응답해주는 프로그램입니다.
@@ -437,7 +437,7 @@ HTTP 통신을 통해 응답해주는 프로그램입니다.
 
 Nginx를 사용하지 않더라고 WAS가 직접 서비스를 제공해도 되지만 DB와 연결된 WAS의 보안을 강화할 수 있다는 장점이 존재합니다.
 
-Gunicorn
+##### Gunicorn
 
 Python WSGI로 웹서버(Nginx)로 부터 서버사이드 요청을 받으면 WSGI를 통해 서버 애플리케이션(Django)로 전달해주는 역할을 수행하고 있습니다.
 
@@ -445,7 +445,7 @@ WSGI의 경우 멀티쓰레드를 만들 수 있기 때문에, Request 요청이
 
 실제로 저희 프로젝트에 Gunicorn을 도입한 결과 응답 속도가 2~3초에서 1초 이내로 상당히 빨라지게 되었습니다.
 
-Uvicorn
+##### Uvicorn
 
 Uvicorn은 uvloop와 Httptools라는 것을 이용해서 ASGI를 구현한 서버입니다.
 내장된 asyncio의 이벤트 루프 역할을 uvloop로 대체하여 동작함으로써 속도면에서 빠르라다고 합니다.
@@ -453,7 +453,8 @@ Uvicorn은 uvloop와 Httptools라는 것을 이용해서 ASGI를 구현한 서�
 Uvicorn은 단일 프로세스로 동작하며, 일정 이상 트래픽이 넘어서면 한계점이 존재합니다.
 이를 보안하기 위해 Gunicorn의 Worker들에 Uvicorn을 활용하여 배포하고 있습니다.
 #### 6.1.3 실시간 메시징 기능 구현을 위한 HTTP 통신과 Socket 통신
-**HTTP 프로토콜**
+
+##### HTTP 프로토콜
 
 HTTP 프로토콜이란 인터넷 상에서 데이터를 주고받기 위한 서버/클라이언트 모델을 따르는 프로토콜을 이야기합니다.
 
@@ -473,7 +474,7 @@ HTTP에서 실시간 통신을 하는 방법에는 대표적으로 3가지가 �
 - Long Polling
 - Streaming
 
-**Polling**
+##### Polling
 
 브라우저가 일정한 주기마다 서버에 HTTP 요청을 보내는 방식입니다.
 
@@ -481,7 +482,7 @@ HTTP에서 실시간 통신을 하는 방법에는 대표적으로 3가지가 �
 
 하지만 이러한 방식은 서버 및 네트워크 부하를 늘리는 악영향을 끼칠 수 있습니다.
 
-**Long Polling**
+##### Long Polling
 
 Polling 방식의 단점인 서버 부하를 줄이며 실시간성을 높이기 위하 고안된 방식입니다.
 
@@ -491,13 +492,13 @@ HTTP 요청이 서버로 들어올 경우 요청에 대한 응답을 보낸 후 
 
 Long Polling 방식은 Polling 방식의 단점을 보안하기 위해 나왔지만 다량의 클라이언트와 연결된 경우, 데이터 변경이 자주 일어나는 경우 오히려 서버에 큰 부담을 줄 수도 있습니다.
 
-**Streaming**
+##### Streaming
 
 Streaming은 서버가 요청을 받았을 경우 해당 요청에 대한 응답을 완료하지 않은 상태에서 데이터를 계속 보내는 방식입니다. 따라서 클라이언트는 응답을 받았다 하더라도 연결을 끊고 다시 요청을 보내는 과정없이 계속하여 응답을 받아 처리할 수 있습니다.
 
 이 방식의 큰 단점은 클라이언트에서 서버쪽으로 데이터를 보내는 것이 힘들다는 점이 있습니다. 양방향 통신이 아닌 단방향 통신에 가깝습니다.
 
-**Websocket**
+##### Websocket
 
 HTTP 프로토콜의 경우 실시간성이 떨어지는 단점이 있어 이를 보안하기 위해 Websocket이라는 기술이 도입되었습니다.
 
@@ -521,7 +522,6 @@ Websocket은 현재 채팅,온라인 게임, 화상 회의 등 많은 분야에�
 많이 부족했음에도 불구하고, 팀 프로젝트를 통해 제가 전보다 발전했음을 느낄 수 있었습니다. GitHub과의 소통과 협업을 통해 중요한 기술적 습득과 성장을 경험했습니다. 이러한 경험을 통해 팀 프로젝트 진행 중에 자신감을 얻을 수 있었고, 이 경험은 미래에도 가치 있는 기억으로 남을 것 같습니다.
 더불어, 개인적인 성장뿐만 아니라 팀 프로젝트를 통해 팀원들과 협력하고 의사소통의 중요성을 깨닫게 되었습니다. 이러한 깨달음은 사회에서도 큰 가치를 가질 것으로 확신합니다. 
 마지막으로 우리 팀 OrGo 너무 고생하셨고, 현우님, 이도님, 수봉님, 사랑님 프로젝트 하는동안 너무 좋은 추억 남겨주셔서 감사합니다. 
-## 마치며
 
 
 
