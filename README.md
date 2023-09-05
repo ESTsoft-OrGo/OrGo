@@ -55,18 +55,60 @@
 
 ### 1.1. 주요 기능
 
--   회원가입 및 로그인 
--   소셜 로그인 (GitHub, Google)
+-   회원가입 및 로그인 , 소셜 로그인 (GitHub, Google)
+    ```
+    
+    ```
 -   JSON Web Token 인증 방식
+    ```
+    
+    ```
 -   프로필 CRU
--   1대1 채팅 
--   게시글, 사용자, 스터디 검색 기능
--   댓글 CRD
+    ```
+
+    ```
+    [# 유저 기능 시연 연상](#51-유저-기능)
 -   Follow / Unfollow 기능
+    ```
+
+    ```
+    [# 팔로우 시연 영상](#57-팔로우-기능)
+-   1대1 채팅
+    ```
+    해당 기능은 1:1 채팅 기능입니다.
+
+    채팅방은 채팅방 목록에서 조회가 가능하며 허가된 유저만 접근할 수 있습니다. 
+    채팅방에서 채팅을 하게 되면 db의 message 테이블에 저장하는 동시에 websocket을 이용해서 바로 통신을 합니다.
+    ```
+    [# Django-Channels](#343-django-channels와-redis)<br>
+    [# 채팅 시연 연상](#53-11-채팅)
+
+-   게시글 CRUD
+    ```
+    
+    ```
+    [# 게시물 시연 영상](#54-게시물-기능)
+-   댓글 CRD
+    ```
+    
+    ```
+    [# 댓글 시연 영상](#55-댓글-기능)
 -   좋아요
+    ```
+    
+    ```
+    [# 좋아요 시연 영상](#56-좋아요-기능)
 -   스터디 모임 CRUD
 -   스터디 리스트 페이지네이션
--   댓글, 좋아요, 팔로우 실시간 알림 기능
+-   게시글, 사용자, 스터디 검색 기능
+-   실시간 알림 기능
+    ```
+    팔로우 했을 때, 게시물에 댓글 또는 좋아요를 남겼을 때, 
+    채팅방이 생성 됐을 때 알림 객체가 생성됩니다.
+    이때 Django-signal과 Channels를 활용하여 WebSocket을 통해 실시간 통신을 지원하고, 알림 메시지를 클라이언트에게 실시간으로 전달하게 됩니다.
+    ```
+    [# 실시간 알림 기능 프로세스](#344-실시간-알림-기능-django-signal-process)
+    [# 실시간 알림 시연 연상](#52-알림)
 
 ## 2. 개발 환경 및 배포 URL
 
@@ -117,6 +159,8 @@
 
 ### 3.1. Entity Relationship Diagram
  ![Untitled](https://github.com/ESTsoft-OrGo/OrGo/assets/95666574/610374a4-d7d9-4b2d-b95a-2750f0b1f3ba)
+
+[DB-Diagram 바로가기](https://dbdiagram.io/d/64b487ff02bd1c4a5e29fecc)
 
 ### 3.2. API 명세서
 
@@ -175,17 +219,46 @@
 
 ![스크린샷 2023-09-03 225445](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/94c72520-8b0a-4f25-acb6-6e0e561a20e4)
 
+[우리가 배포에 Nginx와 Gunicorn,Uvicorn을 사용한 이유](#612-우리가-배포에-nginx와-gunicornuvicorn을-사용한-이유)
+
 #### 3.4.2. Django Channles Request,Response
 
 ![1](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/635c5a7d-c7ec-42ee-9dee-4c3a30067fee)
+
+```
+Django Channels를 사용하게 된다면 Request, Response의 통신 구조가 위와 같은 그림로 나타나게 됩니다.
+
+장고 채널의 경우 Request,Response Cycle을 채널을 관통하는 Message라는 컨셉으로 대체하게 됩니다.
+
+이때 HTTP Request의 경우 여전히 같은 방식으로 작동하지만 채널을 경유하게 되는 구조를 보이고 있습니다.
+```
 
 #### 3.4.3. Django Channels와 Redis
 
 ![2](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/8c8d2a5d-fcfb-4b43-bd78-65a1ae6f7bb4)
 
+```
+Publish / Subscribe란 특정 Channel에 대하여 구독한 모두에게 
+메시지를 발행하는 통신 방법을 얘기합니다. 채널을 구독한 수신자(클라이언트) 모두에게 메세지를 전송 하는것을 의미합니다. 
+
+이를테면 날씨정보를 구독한 사람에게 주기적으로 날씨정보를 보내거나,
+현재 앱에 로그인한 유저에게 푸시를 알림을 보내는 활동들이 위의 원리로 만들어 진다고 보시면 됩니다.
+```
+
 #### 3.4.4. [실시간 알림 기능] Django Signal Process
 ![스크린샷 2023-09-03 221321](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/5ef0e5e7-3530-4162-956b-71aec0274b2e)
 ![스크린샷 2023-09-03 221330](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/9384c0a2-7f35-448e-b958-dc41cc1a40a4)
+
+```
+실시간 알림 기능을 구현하기 위한 프로세스입니다.
+장고 시그널 이라는 라이브러리를 활용하여 구현하였습니다.
+장고 시그널은 모델에 특정한 이벤트가 발생할 경우 작동하게 됩니다.
+
+사용자를 팔로우 했을 때, 게시물에 댓글 또는 좋아요를 남겼을 때, 채팅방이 생성 됐을 때
+알림 객체가 생성됩니다. 이때 시그널과 Channels를 활용하여 WebSocket을 통해 실시간 통신을 지원하고, 알림 메시지를 클라이언트에게 실시간으로 전달하게 됩니다.
+
+이렇게 구현하여 사용자들이 여러환경에서 실시간으로 알림을 받아볼 수 있게 되었습니다.
+```
 
 #### 3.4.5. 폴더 트리
 ```
