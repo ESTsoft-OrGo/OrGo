@@ -14,6 +14,7 @@ from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from .uploads import S3ImgUploader
+from django.db.models import Count
 
 User = get_user_model()
 # Create your views here.
@@ -148,6 +149,20 @@ class RecentPost(APIView):
         
         return Response(response_data, status=status.HTTP_200_OK)
 
+
+class RecommendedPost(APIView):
+    def get(self, request):
+        # 게시물을 좋아요 수와 작성일자(created_at)를 기준으로 정렬하고 가장 높은 5개를 가져옵니다.
+        recommended_posts = Post.objects.filter(is_active=True).annotate(
+            like_count=Count('likes')
+        ).order_by('-like_count', '-created_at')[:5]
+
+        response_data = {
+            "recommended_posts": PostSerializer(recommended_posts, many=True).data
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+    
 
 class Write(APIView):
     permission_classes = [IsAuthenticated]
