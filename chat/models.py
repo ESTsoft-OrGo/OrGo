@@ -21,7 +21,6 @@ def room_action(sender, **kwargs):
 
 post_save.connect(room_action, sender=Room)
 
-
 class Message(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     writer = models.ForeignKey(User, on_delete=models.CASCADE)
