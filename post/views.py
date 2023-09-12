@@ -187,6 +187,8 @@ class Edit(APIView):
         img_edit = request.data.get('img_edit')
         
         if img_edit == "true":
+            img_delete = S3ImgUploader(image.image)
+            img_delete.delete()
             prev_imgs = PostImage.objects.filter(post=post) 
             prev_imgs.delete()
             
@@ -218,8 +220,11 @@ class Delete(APIView):
         images = post.image.all()
         
         for image in images:
+            img_delete = S3ImgUploader(image.image)
+            img_delete.delete()
             image.image.delete()  
-            image.delete()  
+            image.delete()
+        
         
         post.is_active = False
         post.save()
