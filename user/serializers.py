@@ -5,7 +5,7 @@ from .models import User, Profile
 
 
 class UserSerializer(serializers.ModelSerializer):
-    email = serializers.CharField(max_length=80)
+    email = serializers.EmailField(max_length=80)
     password = serializers.CharField(min_length=8, write_only=True)
     profileImage = serializers.FileField(source='profile.profileImage', read_only=True)
     nickname = serializers.CharField(source='profile.nickname', read_only=True)
@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'profileImage', 'nickname', 'about', 'id','login_method']
+        fields = ['email', 'password', 'is_verified', 'profileImage', 'nickname', 'about', 'id','login_method']
 
     def validate(self, attrs):
         email_exists=User.objects.filter(email=attrs['email']).exists()
@@ -41,3 +41,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['nickname', 'about']
+
+
+class VerifySerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=80)
+    otp = serializers.CharField(max_length=6)
