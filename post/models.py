@@ -13,6 +13,7 @@ class Post(models.Model):
     content = models.CharField(max_length=200,null=True,blank=True)
     is_active = models.BooleanField(default=True)
     views = models.IntegerField(default=0)
+    comment_count = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     likes = models.ManyToManyField(User, related_name='liked_posts', through='Like')
@@ -37,7 +38,7 @@ class PostImage(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE) 
-    content = models.CharField(max_length=30)
+    content = models.CharField(max_length=50)
     writer = models.ForeignKey(User, on_delete=models.CASCADE)
     parent_comment = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -50,7 +51,13 @@ def comment_action(sender, **kwargs):
         post = comment.post
         content = f'{post.title}에 댓글을 남겼습니다.'
         
-        noti = Notification.objects.create(sender=comment.writer,receiver=post.writer,content=content)
+        # noti = Notification.objects.create(sender=comment.writer,receiver=post.writer,content=content)
+        if comment.parent_comment is None:
+            noti = Notification.objects.create(sender=comment.writer, receiver=post.writer, content=content)
+        else:
+            parent_comment = comment.parent_comment
+            noti_content = f'{parent_comment.content}에 대댓글을 달았습니다.'
+            noti = Notification.objects.create(sender=comment.writer, receiver=parent_comment.writer, content=noti_content)
 
 post_save.connect(comment_action, sender=Comment)
 
