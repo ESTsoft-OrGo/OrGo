@@ -5,6 +5,12 @@ from django.conf import settings
 from .models import User
 
 
+def generate_random_nickname():
+    adjectives = ["즐거운", "행복한", "도전하는", "용감한", "친절한", "고독한", "고민하는", "멋진", "호기심 많은", "똑똑한"]
+    random_adjective = random.choice(adjectives)
+
+    return random_adjective + " 오르미"
+
 def generate_otp(length=6):
     characters = string.digits
     otp = ''.join(random.choice(characters) for _ in range(length))

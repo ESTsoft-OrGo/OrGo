@@ -12,7 +12,7 @@ from notify.models import Notification
 from .serializers import UserSerializer, ProfileSerializer, VerifySerializer
 from post.models import Post , Like
 from .tokens import create_jwt_pair_for_user
-from .utils import send_otp_via_email, generate_otp
+from .utils import send_otp_via_email, generate_otp, generate_random_nickname
 from post.uploads import S3ImgUploader
 
 
@@ -61,7 +61,9 @@ class Join(APIView):
         serializer = UserSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
+            user.profile.nickname = generate_random_nickname()
+            user.profile.save()
             otp = generate_otp()
             send_otp_via_email(serializer.data['email'], otp=otp)
             response = {"message": "메일을 확인해 주세요.", "data": serializer.data}
