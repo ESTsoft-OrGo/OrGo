@@ -121,6 +121,7 @@ class List(APIView):
                 "title": post.title,
                 "content": post.content,
                 "views": post.views,
+                "commnet_count": post.comment_count,
                 "images": [{"image": image.image.url} for image in images],
                 "created_at": post.created_at,
                 "updated_at": post.updated_at,
@@ -264,6 +265,7 @@ class View(APIView):
         likes = Like_Model.objects.filter(post=raw_post).values()
         writer_info = UserSerializer(raw_post.writer).data
         images = raw_post.image.all()
+        comment_count = comments.count()
 
         comments_infos = []
 
@@ -276,6 +278,7 @@ class View(APIView):
         post_data = PostSerializer(raw_post).data
         post_data["images"] = [{"image": image.image.url} for image in images]
         post_data["likes"] = likes.count()
+        post_data["comment_count"] = comment_count
 
         data = {
             "post": post_data,
