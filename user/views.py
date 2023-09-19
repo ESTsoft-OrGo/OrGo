@@ -4,14 +4,15 @@ from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from .models import User, Profile, Follower
 from notify.models import Notification
-from .serializers import UserSerializer, ProfileSerializer
+from .serializers import UserSerializer, ProfileSerializer, VerifySerializer
 from post.models import Post , Like
 from .tokens import create_jwt_pair_for_user
+from .utils import send_otp_via_email, generate_otp, generate_random_nickname
 from post.uploads import S3ImgUploader
 
 
@@ -60,12 +61,27 @@ class Join(APIView):
         serializer = UserSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
-            response = {"message": "회원가입 성공", "data": serializer.data}
+            user = serializer.save()
+            user.profile.nickname = generate_random_nickname()
+            user.profile.save()
+            response = {"message": "회원 가입 성공", "data": serializer.data}
 
             return Response(data=response, status=status.HTTP_201_CREATED)
         
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GenerateOTP(APIView):
+
+    def post(self, request):
+        email = request.data.get('email')
+        if email:
+            otp = generate_otp()
+            send_otp_via_email(email, otp=otp)
+            response = {"message": "인증 번호 생성", "otp": otp}
+            return Response(data=response, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "이메일 주소를 입력하세요."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class Login(APIView):

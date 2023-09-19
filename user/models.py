@@ -36,6 +36,7 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True, max_length=255)
+    is_verified = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -48,7 +49,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     
     objects = UserManager()
-    
+
 
 class Profile(models.Model):
     user = models.OneToOneField('User', on_delete=models.CASCADE)
