@@ -16,6 +16,8 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     likes = models.ManyToManyField(User, related_name='liked_posts', through='Like')
+    comment_count = models.IntegerField(default=0, null=True)
+    
     def __int__(self):
         return self.id
 
@@ -43,6 +45,7 @@ class Comment(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
 
 def comment_action(sender, **kwargs):
     if kwargs['created']:

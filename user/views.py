@@ -97,10 +97,17 @@ class MyPage(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user_profile = get_object_or_404(Profile, user=request.user)
+        if int(request.data['user_profile']) == request.user.id:
+            user = request.user.id
+        else:
+            user = int(request.data['user_profile'])
+        user_profile = Profile.objects.get(user=user)
         serializer = ProfileSerializer(user_profile)
-        
-        my_posts = Post.objects.filter(writer=request.user,is_active=True).order_by('-created_at')
+        userprofile = User.objects.get(id = user)
+        userserializer = UserSerializer(userprofile)
+        my_posts = Post.objects.filter(writer=request.data['user_profile'],is_active=True).order_by('-created_at')
+        followers = Follower.objects.filter(target_id=user)
+        followings = Follower.objects.filter(follower_id=user)
         
         posts = []
         for post in my_posts:
@@ -121,8 +128,7 @@ class MyPage(APIView):
             }
             posts.append(post_info)
         
-        followers = Follower.objects.filter(target_id=request.user)
-        followings = Follower.objects.filter(follower_id=request.user)
+        
         
         new_followers = []
         new_followings = []
@@ -136,7 +142,9 @@ class MyPage(APIView):
             new_followings.append(following_pf)
         
         response = {
+            "user_id" : request.user.id,
             "serializer": serializer.data,
+            "user" : userserializer.data,
             "my_posts": posts,
             "follower": new_followers,
             "following": new_followings

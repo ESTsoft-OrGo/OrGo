@@ -173,7 +173,6 @@ class Write(APIView):
         return Response(data, status=status.HTTP_201_CREATED)
 
 
-
 class Edit(APIView):
     permission_classes = [IsAuthenticated]
     
