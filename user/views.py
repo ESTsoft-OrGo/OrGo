@@ -64,46 +64,24 @@ class Join(APIView):
             user = serializer.save()
             user.profile.nickname = generate_random_nickname()
             user.profile.save()
-            otp = generate_otp()
-            send_otp_via_email(serializer.data['email'], otp=otp)
-            response = {"message": "메일을 확인해 주세요.", "data": serializer.data}
+            response = {"message": "회원 가입 성공", "data": serializer.data}
 
             return Response(data=response, status=status.HTTP_201_CREATED)
         
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class VerifyOTP(APIView):
+class GenerateOTP(APIView):
+
     def post(self, request):
-        serializer = VerifySerializer(data=request.data)
-
-        if serializer.is_valid():
-            email = serializer.data['email']
-            otp = serializer.data['otp']
-
-            user = User.objects.filter(email=email)
-            if not user.exists():
-                response = {
-                "message": "잘못된 요청입니다.",
-                "data": "invalid email",
-            }
-                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-            
-            if user[0].otp != otp:
-                response = {
-                "message": "잘못된 요청입니다.",
-                "data": "wrong otp",
-            }
-                return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
-
-            user = user.first()
-            user.is_verified = True
-            user.save()
-
-            response = {"message": "회원가입 성공", "data": serializer.data['email']}
-            return Response(data=response, status=status.HTTP_201_CREATED)
-        
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        email = request.data.get('email')
+        if email:
+            otp = generate_otp()
+            send_otp_via_email(email, otp=otp)
+            response = {"message": "인증 번호 생성", "otp": otp}
+            return Response(data=response, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "이메일 주소를 입력하세요."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class Login(APIView):

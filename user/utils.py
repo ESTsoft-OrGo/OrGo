@@ -22,7 +22,3 @@ def send_otp_via_email(email, otp):
     message = f"아래의 코드를 입력하면 회원가입이 완료됩니다.\nCODE: {otp}"
     email_from = settings.EMAIL_HOST_USER
     send_mail(subject, message, email_from, [email])
-
-    user = User.objects.get(email=email)
-    user.otp = otp
-    user.save()
