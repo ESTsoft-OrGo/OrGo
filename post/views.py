@@ -14,7 +14,7 @@ from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from .uploads import S3ImgUploader
-
+import json
 User = get_user_model()
 # Create your views here.
 
@@ -173,7 +173,6 @@ class Write(APIView):
         return Response(data, status=status.HTTP_201_CREATED)
 
 
-
 class Edit(APIView):
     permission_classes = [IsAuthenticated]
     
@@ -185,10 +184,16 @@ class Edit(APIView):
         post.save()
 
         img_edit = request.data.get('img_edit')
-        
+        delete_img_str = request.data.get('deleted_images')
+        delete_img_list = json.loads(delete_img_str)
+        if delete_img_list != '[]':
+            for img in delete_img_list:
+                img_delete = S3ImgUploader(img[1:])
+                img_delete.delete()
+                prev_imgs = PostImage.objects.get(image=img[1:])
+                prev_imgs.delete()
         if img_edit == "true":
             prev_imgs = PostImage.objects.filter(post=post) 
-            prev_imgs.delete()
             
             images = request.FILES.getlist('images') 
 
@@ -201,7 +206,6 @@ class Edit(APIView):
         data = {
             "message": "글 수정 완료"
         }
-
         return Response(data, status=status.HTTP_200_OK)
 
 
@@ -218,8 +222,11 @@ class Delete(APIView):
         images = post.image.all()
         
         for image in images:
+            img_delete = S3ImgUploader(image.image)
+            img_delete.delete()
             image.image.delete()  
-            image.delete()  
+            image.delete()
+        
         
         post.is_active = False
         post.save()
