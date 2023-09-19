@@ -6,10 +6,12 @@ from .models import User
 
 
 def generate_random_nickname():
-    adjectives = ["즐거운", "행복한", "도전하는", "용감한", "친절한", "고독한", "고민하는", "멋진", "호기심 많은", "똑똑한"]
-    random_adjective = random.choice(adjectives)
+    adjectives = ["즐거운", "행복한", "도전하는", "용감한", "친절한", "고독한", "고민하는", "멋진", "궁금한", "똑똑한", "졸린", "배고픈", "배부른", "귀여운"]
+    nouns = ["나무늘보", "울버린", "거북이", "호랑이", "사자", "펭귄", "코끼리", "독수리", "토끼", "용", "너구리", "두더지", "하마", "북극곰", "빈투롱", "코알라", "캥거루"]
+    adjective = random.choice(adjectives)
+    noun = random.choice(nouns)
 
-    return random_adjective + " 오르미"
+    return adjective + " " + noun
 
 def generate_otp(length=6):
     characters = string.digits
