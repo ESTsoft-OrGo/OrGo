@@ -155,7 +155,7 @@ class RecentPost(APIView):
 
 
 class RecommendedPost(APIView):
-    def get(self, request):
+    def post(self, request):
         # 게시물을 좋아요 수와 작성일자(created_at)를 기준으로 정렬하고 가장 높은 5개를 가져옵니다.
         recommended_posts = Post.objects.filter(is_active=True).annotate(
             like_count=Count('likes')
