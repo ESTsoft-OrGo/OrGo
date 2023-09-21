@@ -114,6 +114,8 @@ class List(APIView):
             writer = post.writer
             profile = UserSerializer(writer)
             likes = Like_Model.objects.filter(post_id=post.id).count()
+            comments = Comment.objects.filter(
+                post=post.id, is_active=True).count()
             images = post.image.all()  # 이미지들 가져오기
 
             post_info = {
@@ -121,7 +123,7 @@ class List(APIView):
                 "title": post.title,
                 "content": post.content,
                 "views": post.views,
-                "commnet_count": post.comment_count,
+                "commnet_count": comments,
                 "images": [{"image": image.image.url} for image in images],
                 "created_at": post.created_at,
                 "updated_at": post.updated_at,
@@ -261,7 +263,7 @@ class View(APIView):
         raw_post.views = raw_post.views + 1
         raw_post.save()
 
-        comments = Comment.objects.filter(post=raw_post)
+        comments = Comment.objects.filter(post=raw_post, is_active=True)
         likes = Like_Model.objects.filter(post=raw_post).values()
         writer_info = UserSerializer(raw_post.writer).data
         images = raw_post.image.all()
