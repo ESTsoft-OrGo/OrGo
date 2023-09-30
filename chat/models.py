@@ -37,15 +37,15 @@ class GroupChat(models.Model):
     leader = models.ForeignKey(User, on_delete=models.CASCADE, related_name='leader')
     members = models.ManyToManyField(User, related_name="group_chats")
 
-def group_chat_action(sender, **kwargs):
-    if kwargs['created']:
-        group_chat = kwargs['instance']
-        content = f'단체 채팅방을 생성하였습니다.'
+# def group_chat_action(sender, **kwargs):
+#     if kwargs['created']:
+#         group_chat = kwargs['instance']
+#         content = f'단체 채팅방을 생성하였습니다.'
         
-        for member in group_chat.members.all():
-            Notification.objects.create(sender=group_chat.leader, receiver=member, content=content)
+#         for member in group_chat.members.all():
+#             Notification.objects.create(sender=group_chat.leader, receiver=member, content=content)
 
-post_save.connect(group_chat_action, sender=GroupChat)
+# post_save.connect(group_chat_action, sender=GroupChat)
 
 
 class GroupMessage(models.Model):
