@@ -3,11 +3,11 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.db.models import Q
-from .models import GroupChat, GroupMessage, Room, Message
+from .models import Room, Message
+from study.models import GroupChat, GroupMessage
 from django.contrib.auth import get_user_model
 from user.serializers import UserSerializer
 from user.models import Follower
-from .serializers import GroupChatSerializer
 
 User = get_user_model()
 
@@ -106,37 +106,37 @@ class Following(APIView):
         return Response(data=response, status=status.HTTP_200_OK)
 
 
-class GroupChatCreate(APIView):
-    permission_classes = [IsAuthenticated]
+# class GroupChatCreate(APIView):
+#     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
-        user = request.user
+#     def post(self, request):
+#         user = request.user
 
-        group_chat_data = {
-            "title": request.data.get('title'),
-            "is_active": True,
-            "leader": user,
-        }
+#         group_chat_data = {
+#             "title": request.data.get('title'),
+#             "is_active": True,
+#             "leader": user,
+#         }
 
-        serializer = GroupChatSerializer(data=group_chat_data)
-        if serializer.is_valid():
-            group_chat = serializer.save()
+#         serializer = GroupChatSerializer(data=group_chat_data)
+#         if serializer.is_valid():
+#             group_chat = serializer.save()
 
-            invited_members = request.data.get('invited_members', [])
-            for member_id in invited_members:
-                try:
-                    member = User.objects.get(id=member_id)
-                    group_chat.members.add(member)
-                except User.DoesNotExist:
-                    pass
+#             invited_members = request.data.get('invited_members', [])
+#             for member_id in invited_members:
+#                 try:
+#                     member = User.objects.get(id=member_id)
+#                     group_chat.members.add(member)
+#                 except User.DoesNotExist:
+#                     pass
 
-            datas = {
-                "message": "그룹 채팅이 생성되었습니다.",
-                "group_chat_id": group_chat.id,
-            }
-            return Response(datas, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#             datas = {
+#                 "message": "그룹 채팅이 생성되었습니다.",
+#                 "group_chat_id": group_chat.id,
+#             }
+#             return Response(datas, status=status.HTTP_201_CREATED)
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GroupChatList(APIView):
