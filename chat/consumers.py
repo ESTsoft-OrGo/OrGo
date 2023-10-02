@@ -2,7 +2,6 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import Room , Message
 from django.contrib.auth import get_user_model
-from django.db.models import F,Count
 from django.db.models.functions import TruncDay
 
 User = get_user_model()

@@ -35,29 +35,21 @@ class Study(models.Model):
 def on_post_save_for_study(sender, **kwargs):
     if kwargs['created']:
         study = kwargs['instance']
-        groupChat = GroupChat.objects.create(study=study)
+        groupChat = GroupChat.objects.create(study=study,leader=study.leader)
         groupChat.title = f'studyroom{groupChat.pk}'
+        groupChat.participants.add(study.leader)
         groupChat.save()
 
 post_save.connect(on_post_save_for_study, sender=Study)
+
 
 class GroupChat(models.Model):
     title = models.CharField(max_length=200, null=True, blank=True, unique=True)
     is_active = models.BooleanField(default=True)
     leader = models.ForeignKey(User, on_delete=models.CASCADE, related_name='leader',null=True)
     study = models.OneToOneField(Study,on_delete=models.CASCADE,null=True)
+    participants = models.ManyToManyField(User,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    # members = models.ManyToManyField(User, related_name="group_chats")
-
-# def group_chat_action(sender, **kwargs):
-#     if kwargs['created']:
-#         group_chat = kwargs['instance']
-#         content = f'단체 채팅방을 생성하였습니다.'
-        
-#         for member in group_chat.members.all():
-#             Notification.objects.create(sender=group_chat.leader, receiver=member, content=content)
-
-# post_save.connect(group_chat_action, sender=GroupChat)
 
 
 class GroupMessage(models.Model):
