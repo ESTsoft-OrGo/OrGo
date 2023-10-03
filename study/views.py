@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from user.models import User
-from .models import Study, Tag
+from .models import Study, Tag, GroupChat
 from .serializers import StudySerializer, TagSerializer
 from user.serializers import UserSerializer
 from .pagination import PaginationHandlerMixin, StudyPagination
@@ -47,6 +47,10 @@ class StudyCancel(APIView):
             if study.participants.count() == study.max_participants:
                 study.status="모집중"
                 study.save()
+                
+            groupChat = GroupChat.objects.get(study=study)
+            if request.user in groupChat.participants.all():
+                groupChat.participants.remove(request.user)
                 
             study.participants.remove(request.user)
             return Response({"message": "스터디 참가가 취소되었습니다."}, status=status.HTTP_200_OK)
