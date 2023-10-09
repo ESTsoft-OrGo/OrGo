@@ -4,14 +4,15 @@ from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from .models import User, Profile, Follower
 from notify.models import Notification
-from .serializers import UserSerializer, ProfileSerializer
+from .serializers import UserSerializer, ProfileSerializer, VerifySerializer
 from post.models import Post , Like
 from .tokens import create_jwt_pair_for_user
+from .utils import send_otp_via_email, generate_otp, generate_random_nickname
 from post.uploads import S3ImgUploader
 
 
@@ -60,12 +61,27 @@ class Join(APIView):
         serializer = UserSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
-            response = {"message": "회원가입 성공", "data": serializer.data}
+            user = serializer.save()
+            user.profile.nickname = generate_random_nickname()
+            user.profile.save()
+            response = {"message": "회원 가입 성공", "data": serializer.data}
 
             return Response(data=response, status=status.HTTP_201_CREATED)
         
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GenerateOTP(APIView):
+
+    def post(self, request):
+        email = request.data.get('email')
+        if email:
+            otp = generate_otp()
+            send_otp_via_email(email, otp=otp)
+            response = {"message": "인증 번호 생성", "otp": otp}
+            return Response(data=response, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "이메일 주소를 입력하세요."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class Login(APIView):
@@ -97,10 +113,17 @@ class MyPage(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user_profile = get_object_or_404(Profile, user=request.user)
+        if int(request.data['user_profile']) == request.user.id:
+            user = request.user.id
+        else:
+            user = int(request.data['user_profile'])
+        user_profile = Profile.objects.get(user=user)
         serializer = ProfileSerializer(user_profile)
-        
-        my_posts = Post.objects.filter(writer=request.user,is_active=True).order_by('-created_at')
+        userprofile = User.objects.get(id = user)
+        userserializer = UserSerializer(userprofile)
+        my_posts = Post.objects.filter(writer=request.data['user_profile'],is_active=True).order_by('-created_at')
+        followers = Follower.objects.filter(target_id=user)
+        followings = Follower.objects.filter(follower_id=user)
         
         posts = []
         for post in my_posts:
@@ -121,8 +144,7 @@ class MyPage(APIView):
             }
             posts.append(post_info)
         
-        followers = Follower.objects.filter(target_id=request.user)
-        followings = Follower.objects.filter(follower_id=request.user)
+        
         
         new_followers = []
         new_followings = []
@@ -136,7 +158,9 @@ class MyPage(APIView):
             new_followings.append(following_pf)
         
         response = {
+            "user_id" : request.user.id,
             "serializer": serializer.data,
+            "user" : userserializer.data,
             "my_posts": posts,
             "follower": new_followers,
             "following": new_followings

@@ -19,7 +19,6 @@ from django.conf import settings
 from django.views.static import serve 
 
 urlpatterns = [
-    path('chat/', include('chat.urls')),
     path('notify/', include('notify.urls')),
     path('admin/', admin.site.urls),
     path('user/', include('user.urls')),
