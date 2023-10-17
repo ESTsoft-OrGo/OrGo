@@ -65,6 +65,13 @@ Estsoft에서 주관하는 백엔드 오르미 교육과정에서 만난 비전�
     이메일을 통한 회원가입 뿐만 아니라 구글과 깃허브를 이용한 소셜로그인 기능을 제공하고 있습니다.
     회원탈퇴와 비밀번호 변경 기능도 제공하고 있습니다.
     ```
+-   이메일로 통한 회원가입시 메일 인증
+    ```
+    SMTP 서버를 통해 이메일 인증기능을 구현하였습니다.
+
+    작성하신 이메일 주소로 인증번호가 발송됩니다. 
+    인증번호가 일치할 경우 회원가입이 가능합니다.
+    ```
 -   JSON Web Token 인증 방식
     ```
     로그인시 발급된 Access Token을 통해서 유저 인증을 진행하는 기능을 제공하고 있습니다.
@@ -87,6 +94,11 @@ Estsoft에서 주관하는 백엔드 오르미 교육과정에서 만난 비전�
 
     채팅방은 채팅방 목록에서 조회가 가능하며 인증된 유저만 접근할 수 있습니다.
     팔로잉한 유저와의 채팅방을 생성 할 수 있으며, 채팅방에서 채팅을 하게 되면 db의 message 테이블에 저장하는 동시에 websocket을 이용해서 실시간 통신을 합니다.
+    ```
+-   1대1 채팅 차단 기능
+    ```
+    더 이상 채팅을 진행하고 싶지 않은 유저를 차단할 수 있습니다.
+    실수로 차단한 경우 해제 또한 가능합니다.
     ```
     [# Django-Channels](#343-django-channels와-redis)<br>
     [# 채팅 시연 연상](#53-11-채팅)
@@ -111,6 +123,11 @@ Estsoft에서 주관하는 백엔드 오르미 교육과정에서 만난 비전�
     혼자라서 공부하기 힘들 때 같이 공부할 팀원들을 모집할 수 있습니다.
     스터디 모집 컨텐츠의 수정과 삭제 또한 가능합니다.
     원하는 스터디가 있을 경우 참가가 가능하고, 취소 또한 가능합니다.
+    ```
+-   스터디 모임 단체 채팅 기능
+    ```
+    특정 스터디에 참가한 인원들간의 소통을 위해 단체 채팅방 기능을 지원합니다.
+    채팅방은 스터디 생성시 자동으로 생성됩니다.
     ```
 -   스터디 리스트 페이지네이션
     ```
@@ -173,6 +190,11 @@ Estsoft에서 주관하는 백엔드 오르미 교육과정에서 만난 비전�
 -   https://api.withorgo.site/
 -   Back-End Repo : https://github.com/ESTsoft-OrGo/OrGo
 
+#### 2.3.1. chat Back-End
+
+-   https://chat.withorgo.site/
+-   chat Back-End Repo : https://github.com/ESTsoft-OrGo/OrGoChat
+
 #### 2.3.2. Front-End
 
 -   https://www.withorgo.site/
@@ -181,7 +203,7 @@ Estsoft에서 주관하는 백엔드 오르미 교육과정에서 만난 비전�
 ## 3. 프로젝트 구조와 개발 일정
 
 ### 3.1. Entity Relationship Diagram
- ![Untitled](https://github.com/ESTsoft-OrGo/OrGo/assets/95666574/610374a4-d7d9-4b2d-b95a-2750f0b1f3ba)
+![스크린샷 2023-10-17 145645](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/8d039f1e-aff5-42ed-9662-05201803bc1b)
 
 [DB-Diagram 바로가기](https://dbdiagram.io/d/64b487ff02bd1c4a5e29fecc)
 
@@ -230,17 +252,23 @@ Estsoft에서 주관하는 백엔드 오르미 교육과정에서 만난 비전�
 |참여한 목록|chat/list/||
 |생성 가능한 채팅방 목록|chat/following/|팔로잉한 유저만 채팅방 생성 가능|
 |채팅방 생성|chat/join/||
-|채팅방 입장|ws:/chat/str:room_name/||
-|메시지 보내기|ws:/chat/str:room_name/||
+|스터디 그룹 채팅방 들어가기|chat/studychatjoin/||
+|스터디 그룹 채팅방 나가기|chat/studychatleave/||
+|채팅 차단|chat/blacklist/add/||
+|차단 해제|chat/blacklist/del/||
+|채팅방 입장|chat/str:room_name/||
+|메시지 보내기|chat/str:room_name/||
+|스터디 그룹 채팅방 입장|groupchat/str:room_name/||
+|스터디 그룹 채팅방 메시지 보내기|groupchat/str:room_name/||
 |Notify|||
-|실시간 알림 받기|ws:/notify/str:user_id/||
+|실시간 알림 받기|notify/str:user_id/||
 |알림 목록|notify/||
 
 ### 3.4. 프로젝트 설계 및 프로세스
 
 #### 3.4.1. Architecture
 
-![스크린샷 2023-09-03 225445](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/94c72520-8b0a-4f25-acb6-6e0e561a20e4)
+![그림2](https://github.com/ESTsoft-OrGo/OrGoChat/assets/107661525/ea9b19ff-e6a9-425b-a0d1-ca8fa5fd54ff)
 
 [우리가 배포에 Nginx와 Gunicorn,Uvicorn을 사용한 이유](#612-우리가-배포에-nginx와-gunicornuvicorn을-사용한-이유)
 
@@ -356,8 +384,17 @@ Publish / Subscribe란 특정 Channel에 대하여 구독한 모두에게
 
 - 일정 관리: https://withorgo.notion.site/d52779f12ac547dabc1240320ef4aeb2?v=fb0701095b3840218a980c13305cda34&pvs=4
 
+
+
 ![스크린샷 2023-09-04 175059](https://github.com/Hyunwooz/DjangoGptProject_BE/assets/107661525/cbe30798-aef7-4d7d-ac6a-5eda5d91b0c1)
 ![스크린샷 2023-09-01 141622](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/f9bae29d-0fbe-4e28-b771-2ef2dfe5c803)
+
+고도화 프로젝트 진행
+```
+고도화 프로젝트는 Github Project를 이용하여 진행하였습니다.
+```
+- 고도화 프로젝트: https://github.com/orgs/ESTsoft-OrGo/projects/1
+![스크린샷 2023-10-17 152908](https://github.com/ESTsoft-OrGo/OrGoChat/assets/107661525/782cb96c-c46d-4a4e-8346-4066cd735c26)
 
 #### 3.5.2. 기술 스택
 
@@ -387,6 +424,8 @@ Figma : https://www.figma.com/file/8jeAIfOdZcYZ8ehctmA8yn/Untitled?type=design&n
 
 -   회원가입
     ![join](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/776231be-2552-4e76-89aa-6fe7069e81b0)
+
+-   이메일 인증
 
 -   로그인
     ![login](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/d34781b2-c27d-4d4b-97c1-f87d6587683a)
@@ -424,6 +463,9 @@ Figma : https://www.figma.com/file/8jeAIfOdZcYZ8ehctmA8yn/Untitled?type=design&n
 
 -   1:1 채팅 기능
     ![direct-message](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/7fe5321c-203a-4e2f-b569-e074079df4fc)
+
+-   채팅 차단 기능
+    ![차단기능](https://github.com/ESTsoft-OrGo/OrGoChat/assets/107661525/6cd2c62e-ac89-416a-b7da-c98e46d6c5e7)
 
 ### 5.4. 게시물 기능
 
@@ -476,6 +518,9 @@ Figma : https://www.figma.com/file/8jeAIfOdZcYZ8ehctmA8yn/Untitled?type=design&n
 
 -   참가 / 참가 취소
     ![study-join-quit](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/c814963f-c08b-4b0c-8cb8-ec93d7c0c48d)
+
+-   스터디 모임 단체 채팅 기능
+    ![단체채팅방 참여](https://github.com/ESTsoft-OrGo/OrGoChat/assets/107661525/a5dd56ee-94d9-4bad-a3cf-5482b21b6320)
 
 ### 5.9. 검색 기능
 
