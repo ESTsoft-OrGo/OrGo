@@ -38,7 +38,7 @@ class CommentWrite(APIView):
 class CommentDelete(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def delete(self, request):
         comment = Comment.objects.get(id=request.data['comment_id'])
         comment.is_active = False
         comment.save()
@@ -74,7 +74,7 @@ class ReCommentWrite(APIView):
 class Unlike(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def delete(self, request):
         post_id = request.data.get('post_id')
         user = request.user
 
@@ -106,7 +106,7 @@ class Like(APIView):
 
 class List(APIView):
 
-    def post(self, request):
+    def get(self, request):
         posts = Post.objects.filter(is_active=True).order_by('-created_at')
 
         data = []
@@ -144,20 +144,8 @@ class List(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
-class RecentPost(APIView):
-    def post(self, request):
-        recent_posts = Post.objects.filter(
-            is_active=True).order_by('-created_at')[:5]
-
-        response_data = {
-            "recent_posts": PostSerializer(recent_posts, many=True).data
-        }
-
-        return Response(response_data, status=status.HTTP_200_OK)
-
-
 class RecommendedPost(APIView):
-    def post(self, request):
+    def get(self, request):
         # 게시물을 좋아요 수와 작성일자(created_at)를 기준으로 정렬하고 가장 높은 5개를 가져옵니다.
         recommended_posts = Post.objects.filter(is_active=True).annotate(
             like_count=Count('likes')
@@ -197,7 +185,7 @@ class Write(APIView):
 class Edit(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, pk):
+    def put(self, request, pk):
         post = Post.objects.get(id=pk)
 
         post.title = request.data.get('title', post.title)
@@ -232,7 +220,7 @@ class Edit(APIView):
 class Delete(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, pk):
+    def delete(self, request, pk):
 
         try:
             post = Post.objects.get(id=pk)
@@ -258,7 +246,7 @@ class Delete(APIView):
 
 class View(APIView):
     # 좋아요, 글 정보, 댓글과 대댓글 구분
-    def post(self, request, pk):
+    def get(self, request, pk):
         raw_post = Post.objects.get(id=pk)
         raw_post.views = raw_post.views + 1
         raw_post.save()
@@ -293,7 +281,7 @@ class View(APIView):
 
 
 class PostSearch(APIView):
-    def post(self, request):
+    def get(self, request):
         query = request.data.get('query')
 
         if query is None:

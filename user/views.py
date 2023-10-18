@@ -112,7 +112,7 @@ class Login(APIView):
 class MyPage(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def get(self, request):
         if int(request.data['user_profile']) == request.user.id:
             user = request.user.id
         else:
@@ -172,7 +172,7 @@ class MyPage(APIView):
 class ProfileSave(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def put(self, request):
         user_profile = get_object_or_404(Profile, user=request.user)
         serializer = ProfileSerializer(user_profile, data=request.data)
         
@@ -201,7 +201,7 @@ class ProfileSave(APIView):
 class ChangePassword(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def put(self, request):
         user = request.user
         current_password = request.data.get("current_password")
         new_password = request.data.get("new_password")
@@ -222,7 +222,7 @@ class ChangePassword(APIView):
 class Delete(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def delete(self, request):
         user = request.user
         refresh_token = RefreshToken.for_user(user)
         refresh_token.blacklist()

@@ -16,7 +16,7 @@ User = get_user_model()
 class NotifyList(APIView):
     permission_classes = [IsAuthenticated]
     
-    def post(self, request):
+    def get(self, request):
         user = request.user
         notifications = Notification.objects.filter(receiver=user,is_read=False)
 

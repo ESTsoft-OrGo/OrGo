@@ -38,7 +38,7 @@ class StudyJoin(APIView):
 class StudyCancel(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def delete(self, request):
         study_id = request.data.get('study_id')
         study = get_object_or_404(Study, id=study_id)
         
@@ -137,7 +137,7 @@ class StudyCreate(APIView):
 class StudyEdit(APIView):
     permission_classes = [IsAuthenticated]
     
-    def post(self, request):
+    def put(self, request):
         study = Study.objects.get(id=request.data['study_id'])
         serializer = StudySerializer(study, data=request.data, partial=True)
         current_participants = list(study.participants.all())
@@ -170,7 +170,7 @@ class StudyEdit(APIView):
 class StudyDelete(APIView):
     permission_classes = [IsAuthenticated]
     
-    def post(self, request):
+    def delete(self, request):
         study = Study.objects.get(id=request.data['study_id'])
         study.is_active = False
         study.save()
@@ -182,7 +182,7 @@ class StudyDelete(APIView):
 
 
 class StudyView(APIView):
-    def post(self, request):
+    def get(self, request):
         raw_study = Study.objects.get(id=request.data['study_id'])
         tags = Tag.objects.filter(study=raw_study).values()
         leader = UserSerializer(raw_study.leader)
@@ -222,7 +222,7 @@ class Tagadd(APIView):
 class TagDelete(APIView):
     permission_classes = [IsAuthenticated]
     
-    def post(self, request):
+    def delete(self, request):
         tag = Tag.objects.get(id=request.data['tag_id'])
         tag.delete()
         
