@@ -261,10 +261,11 @@ Estsoft에서 주관하는 백엔드 오르미 교육과정에서 만난 비전�
 |참여한 목록|chat/list/|GET|
 |생성 가능한 채팅방 목록|chat/following/|GET|
 |채팅방 생성|chat/join/|POST|
-|스터디 그룹 채팅방 들어가기|chat/studychatjoin/|POST|
-|스터디 그룹 채팅방 나가기|chat/studychatleave/|DELETE|
+|채팅방 삭제|chat/delete/|DELETE|
 |채팅 차단|chat/blacklist/add/|POST|
 |차단 해제|chat/blacklist/del/|DELETE|
+|스터디 그룹 채팅방 들어가기|chat/studychatjoin/|POST|
+|스터디 그룹 채팅방 나가기|chat/studychatleave/|DELETE|
 |채팅방 입장|chat/str:room_name/|Websocket|
 |메시지 보내기|chat/str:room_name/|Websocket|
 |스터디 그룹 채팅방 입장|groupchat/str:room_name/|Websocket|
