@@ -209,7 +209,9 @@ Estsoft에서 주관하는 백엔드 오르미 교육과정에서 만난 비전�
 
 ### 3.2. API 명세서
 
-#### 3.2.1. API 명세서: https://withorgo.notion.site/API-15bb92089e5048df8bf9a1916bba61d3?pvs=4
+#### 3.2.1. API 명세서: https://github.com/ESTsoft-OrGo/OrGo/wiki/API-%EB%AA%85%EC%84%B8%EC%84%9C
+
+![스크린샷 2023-10-18 144438](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/9a23d9b3-38eb-441e-bc79-f6a5683d40bb)
 
 ### 3.3. URL 설계
 #### api.withorgo.site
@@ -383,15 +385,18 @@ Publish / Subscribe란 특정 Channel에 대하여 구독한 모두에게
 #### 3.5.1. 개발 일정
 ##### 개발 기간
 - 2023.08.17 ~ 2023.09.01
+##### 프로젝트 고도화 기간
+- 2023.09.11 ~ 2023.09.25
 
 ##### 회의록
 - 프로젝트 회의록 : https://withorgo.notion.site/c7274b6b1f3e44579d1da91bfc771314?pvs=4
+
+- 고도화 회의 ![스크린샷 2023-10-18 144726](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/2586cedd-01be-406d-ae82-e5d8a28eb75f)
+
 ![스크린샷 2023-09-06 091325](https://github.com/Hyunwooz/DjangoGptProject_BE/assets/107661525/076839eb-94da-48ba-87fa-bcc264ba7657)
 ##### 일정 관리
 
 - 일정 관리: https://withorgo.notion.site/d52779f12ac547dabc1240320ef4aeb2?v=fb0701095b3840218a980c13305cda34&pvs=4
-
-
 
 ![스크린샷 2023-09-04 175059](https://github.com/Hyunwooz/DjangoGptProject_BE/assets/107661525/cbe30798-aef7-4d7d-ac6a-5eda5d91b0c1)
 ![스크린샷 2023-09-01 141622](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/f9bae29d-0fbe-4e28-b771-2ef2dfe5c803)
@@ -433,6 +438,7 @@ Figma : https://www.figma.com/file/8jeAIfOdZcYZ8ehctmA8yn/Untitled?type=design&n
     ![join](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/776231be-2552-4e76-89aa-6fe7069e81b0)
 
 -   이메일 인증
+    ![이메일인증](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/f25a09de-5d89-41ea-83ca-f7f35fcb4f9b)
 
 -   로그인
     ![login](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/d34781b2-c27d-4d4b-97c1-f87d6587683a)
