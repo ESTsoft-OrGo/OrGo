@@ -212,57 +212,63 @@ Estsoft에서 주관하는 백엔드 오르미 교육과정에서 만난 비전�
 #### 3.2.1. API 명세서: https://withorgo.notion.site/API-15bb92089e5048df8bf9a1916bba61d3?pvs=4
 
 ### 3.3. URL 설계
-|이름|URL|비고|
+#### api.withorgo.site
+|이름|URL|Method|
 |------|---|---|
 |User|||
-|로그인|user/login/||
-|회원가입|user/join/||
-|소셜 로그인|user/login/provider||
-|프로필|user/profile/||
-|프로필 수정|user/profile/update/||
-|비밀번호 변경|user/profile/change-password/||
-|회원탈퇴|user/profile/delete/||
+|로그인|user/login/|POST|
+|소셜 로그인|user/login/provider|POST|
+|회원가입|user/join/|POST|
+|이메일 OTP|user/otp/|POST|
+|프로필 조회|user/profile/|GET|
+|프로필 수정|user/profile/update/|PUT|
+|비밀번호 변경|user/profile/change-password/|PUT|
+|회원탈퇴|user/profile/delete/|DELETE|
 |Post|||
-|목록|post/||
-|글쓰기|post/write/||
-|수정|post/edit/||
-|삭제|post/delete/||
-|뷰|post/view/||
+|게시글 조회|post/|GET|
+|게시글 작성|post/write/|POST|
+|게시글 수정|post/edit/|PUT|
+|게시글 삭제|post/delete/|DELETE|
+|게시글 상세보기|post/view/|GET|
 |Search|||
-|검색|post/search/||
+|검색|post/search/|GET|
 |Like|||
-|좋아요|post/like/||
-|좋아요 취소|post/unlike/||
+|좋아요|post/like/|POST|
+|좋아요 취소|post/unlike/|DELETE|
 |Follow|||
-|팔로잉|user/follow/|Follow와 Unfollow 기능 둘다 함.|
+|팔로잉/언팔로잉|user/follow/|POST|
 |Comment|||
-|쓰기|post/comment/write/||
-|삭제|post/comment/delete/||
-|대댓글 쓰기|post/re-comment/write/||
+|쓰기|post/comment/write/|POST|
+|삭제|post/comment/delete/|DELETE|
+|대댓글 쓰기|post/re-comment/write/|POST|
 |Study|||
-|목록|study/?page=number||
-|생성|study/create/||
-|참가|study/join/||
-|참가 취소|study/join/cancle/||
-|수정|study/edit/||
-|삭제|study/delete/||
-|tag 생성|study/tag/write/||
-|tag 삭제|study/tag/delete/||
-|Chat|||
-|참여한 목록|chat/list/||
-|생성 가능한 채팅방 목록|chat/following/|팔로잉한 유저만 채팅방 생성 가능|
-|채팅방 생성|chat/join/||
-|스터디 그룹 채팅방 들어가기|chat/studychatjoin/||
-|스터디 그룹 채팅방 나가기|chat/studychatleave/||
-|채팅 차단|chat/blacklist/add/||
-|차단 해제|chat/blacklist/del/||
-|채팅방 입장|chat/str:room_name/||
-|메시지 보내기|chat/str:room_name/||
-|스터디 그룹 채팅방 입장|groupchat/str:room_name/||
-|스터디 그룹 채팅방 메시지 보내기|groupchat/str:room_name/||
+|목록|study/?page=number|GET|
+|생성|study/create/|POST|
+|참가|study/join/|POST|
+|참가 취소|study/join/cancle/|DELETE|
+|수정|study/edit/|PUT|
+|삭제|study/delete/|DELETE|
+|tag 생성|study/tag/write/|POST|
+|tag 삭제|study/tag/delete/|DELETE|
 |Notify|||
-|실시간 알림 받기|notify/str:user_id/||
-|알림 목록|notify/||
+|실시간 알림 받기|notify/str:user_id/|Websocket|
+|알림 목록|notify/|GET|
+
+#### chat.withorgo.site
+|이름|URL|Method|
+|------|---|---|
+|Chat|||
+|참여한 목록|chat/list/|GET|
+|생성 가능한 채팅방 목록|chat/following/|GET|
+|채팅방 생성|chat/join/|POST|
+|스터디 그룹 채팅방 들어가기|chat/studychatjoin/|POST|
+|스터디 그룹 채팅방 나가기|chat/studychatleave/|DELETE|
+|채팅 차단|chat/blacklist/add/|POST|
+|차단 해제|chat/blacklist/del/|DELETE|
+|채팅방 입장|chat/str:room_name/|Websocket|
+|메시지 보내기|chat/str:room_name/|Websocket|
+|스터디 그룹 채팅방 입장|groupchat/str:room_name/|Websocket|
+|스터디 그룹 채팅방 메시지 보내기|groupchat/str:room_name/|Websocket|
 
 ### 3.4. 프로젝트 설계 및 프로세스
 
