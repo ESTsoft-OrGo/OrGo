@@ -156,15 +156,20 @@ Estsoft에서 주관하는 백엔드 오르미 교육과정에서 만난 비전�
 
 -   Python == 3.11.3
 -   Django == 4.2.4
--   channels == 4.0.0
--   channels-reids == 4.0.0
+
+PostgreSQL
 -   psycopg2 == 2.9.7
--   Pillow == 10.0.0
+
+AWS S3
 -   boto3 == 1.28.38
 -   django-storages == 1.13.2
--   daphne == 4.0.0
--   Twisted == 22.10.0
--   django-cors-headers == 4.2.0
+
+Websocket
+-   channels == 4.0.0
+-   channels-reids == 4.0.0
+-   daphne == 4.0.0 (Local Test)
+
+DRF
 -   djangorestframework == 3.14.0
 
 ### 2.2. 배포 환경
@@ -391,9 +396,13 @@ Publish / Subscribe란 특정 Channel에 대하여 구독한 모두에게
 ##### 회의록
 - 프로젝트 회의록 : https://withorgo.notion.site/c7274b6b1f3e44579d1da91bfc771314?pvs=4
 
-- 고도화 회의 ![스크린샷 2023-10-18 144726](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/2586cedd-01be-406d-ae82-e5d8a28eb75f)
-
 ![스크린샷 2023-09-06 091325](https://github.com/Hyunwooz/DjangoGptProject_BE/assets/107661525/076839eb-94da-48ba-87fa-bcc264ba7657)
+
+- 고도화 회의 
+
+![스크린샷 2023-10-18 144726](https://github.com/ESTsoft-OrGo/OrGo/assets/107661525/2586cedd-01be-406d-ae82-e5d8a28eb75f)
+
+
 ##### 일정 관리
 
 - 일정 관리: https://withorgo.notion.site/d52779f12ac547dabc1240320ef4aeb2?v=fb0701095b3840218a980c13305cda34&pvs=4
@@ -401,11 +410,12 @@ Publish / Subscribe란 특정 Channel에 대하여 구독한 모두에게
 ![스크린샷 2023-09-04 175059](https://github.com/Hyunwooz/DjangoGptProject_BE/assets/107661525/cbe30798-aef7-4d7d-ac6a-5eda5d91b0c1)
 ![스크린샷 2023-09-01 141622](https://github.com/Hyunwooz/DjangoGptProject_FE/assets/107661525/f9bae29d-0fbe-4e28-b771-2ef2dfe5c803)
 
-고도화 프로젝트 진행
+프로젝트 고도화 일정
 ```
-고도화 프로젝트는 Github Project를 이용하여 진행하였습니다.
+프로젝트 고도화는 Github Project를 이용하여 진행하였습니다.
 ```
-- 고도화 프로젝트: https://github.com/orgs/ESTsoft-OrGo/projects/1
+- 프로젝트 고도화: https://github.com/orgs/ESTsoft-OrGo/projects/1
+
 ![스크린샷 2023-10-17 152908](https://github.com/ESTsoft-OrGo/OrGoChat/assets/107661525/782cb96c-c46d-4a4e-8346-4066cd735c26)
 
 #### 3.5.2. 기술 스택
