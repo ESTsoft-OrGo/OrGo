@@ -11,7 +11,7 @@ urlpatterns = [
     path('edit/<int:pk>/', Edit.as_view(), name='edit'),
     path('delete/<int:pk>/', Delete.as_view(), name='delete'),
     path('view/<int:pk>/', View.as_view(), name='view'),
-    path('search/', PostSearch.as_view(), name='post-search'),
+    path('search/<str:query>/', PostSearch.as_view(), name='post-search'),
     # 댓글
     path("comment/write/", CommentWrite.as_view(), name="cm-write"),
     path("comment/delete/", CommentDelete.as_view(), name="cm-delete"),

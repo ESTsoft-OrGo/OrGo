@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-from study.models import Study
+from study.models import Study, Tag
 from study.serializers import StudySerializer
 from .models import Post, Like as Like_Model, Comment, PostImage
 from user.models import Profile
@@ -281,8 +281,8 @@ class View(APIView):
 
 
 class PostSearch(APIView):
-    def get(self, request):
-        query = request.data.get('query')
+    def get(self, request, query):
+        # query = request.data.get('query')
 
         if query is None:
             return Response({"error": "Missing 'query' parameter"}, status=400)
@@ -326,9 +326,11 @@ class PostSearch(APIView):
         for s_s in study_serializer:
             leader = User.objects.get(id=s_s['leader'])
             leader_info = UserSerializer(leader).data
+            tags = Tag.objects.filter(study=s_s['id']).values()
             info = {
                 'study': s_s,
-                'leader': leader_info
+                'leader': leader_info,
+                'tags': tags
             }
             new_studies.append(info)
 
