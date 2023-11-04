@@ -192,12 +192,12 @@ DRF
 
 #### 2.3.1. Back-End
 
--   https://api.withorgo.site/
+-   배포 중단
 -   Back-End Repo : https://github.com/ESTsoft-OrGo/OrGo
 
 #### 2.3.1. chat Back-End
 
--   https://chat.withorgo.site/
+-   배포 중단
 -   chat Back-End Repo : https://github.com/ESTsoft-OrGo/OrGoChat
 
 #### 2.3.2. Front-End
